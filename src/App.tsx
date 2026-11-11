@@ -84,7 +84,7 @@ export default function App() {
   const feature = (title: string, body: string, round: string) => setDialog({ kind: 'feature', title, body, round });
 
 
-  return <div className={`app ${preferences.largeText ? 'large-text' : ''}`}>
+  return <div className={`app route-${route} ${policyId ? 'has-detail' : ''} ${preferences.largeText ? 'large-text' : ''}`}>
     <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); pageHeading.current?.focus(); }}>ข้ามไปเนื้อหาหลัก</a>
     <aside className="sidebar">
       <a href="#/overview" className="brand-link" aria-label="LIVERA กลับหน้าภาพรวม"><Logo/></a>
@@ -121,13 +121,15 @@ export default function App() {
             <div className="stat-card"><div className="stat-heading"><span>บำนาญตามตัวอย่าง</span><Compass size={19}/></div><div className="stat-value">{amount(120000)}<span>บาท/ปี</span></div><p>เริ่มรับตามตัวอย่างเมื่ออายุ 60 ปี</p></div>
           </section>
 
+          <p className="mobile-data-note">ข้อมูลสาธิต · ยอดที่บันทึกยังไม่ยืนยันจากบริษัทประกัน</p>
           <a className="journey-card" href="#/policies/saving"><ProgressRing value={policies[0].progress}/><div><span className="eyebrow">YOUR NEXT CHAPTER</span><strong>ทุกงวด คืออีกก้าวของแผนที่ตั้งใจ</strong><p>แผนสะสมทรัพย์ · บันทึกครบ {policies[0].paidPeriods} จาก {policies[0].totalPeriods} งวด</p></div><span className="journey-cta">ดูเส้นทางของฉัน<ArrowUpRight size={17}/></span></a>
-          <div className="overview-bottom-grid"><section className="panel portfolio-panel"><SectionTitle title="กรมธรรม์ของฉัน" subtitle="แผนแต่ละฉบับ ดูรายละเอียดได้ในที่เดียว" href="#/policies"/>
+          <div className="overview-bottom-grid overview-desktop-details"><section className="panel portfolio-panel"><SectionTitle title="กรมธรรม์ของฉัน" subtitle="แผนแต่ละฉบับ ดูรายละเอียดได้ในที่เดียว" href="#/policies"/>
             <div className="policy-list">{policies.map(policy => <button key={policy.id} className="policy-row" onClick={() => { window.location.hash = `/policies/${policy.id}`; }}><PolicyIcon policy={policy}/><span className="policy-row-copy"><strong>{policy.name}</strong><span>{policy.english}</span></span><span className="policy-row-value">{amount(policy.premium)}<small>บาท / {policy.frequency}</small></span><ChevronRight size={17}/></button>)}</div>
             <div className="portfolio-footnote"><ShieldCheck size={15}/>กรมธรรม์และตัวเลขทั้งหมดเป็นข้อมูลสมมติ</div>
           </section>
           <section className="club-teaser photo-club-teaser"><img src={`${import.meta.env.BASE_URL}images/retirement-club.webp`} alt="ภาพประกอบสมจริงของสมาชิกผู้สูงอายุทำกิจกรรมในบ้านพัก" loading="lazy"/><div className="club-teaser-heading"><span className="eyebrow">A LITTLE MORE TO LIFE</span><Badge>เฉพาะสมาชิก</Badge></div><h2>Retirement<br/><span>Luxury Club</span></h2><p>พบเพื่อนใหม่ เติมประสบการณ์ดี ๆ<br/>ทั้งพบกันจริงและออนไลน์</p><div className="teaser-event"><span className="mini-date"><b>28</b>NOV</span><span><strong>มื้อสายและชีวิตบทใหม่</strong><small>กิจกรรมตัวอย่าง · พบกันจริง</small></span></div><a className="text-link" href="#/club">สำรวจกิจกรรมคลับ <ArrowUpRight size={17}/></a></section></div>
-          <section className="quick-links" aria-label="ทางลัด"><a href="#/retirement"><span className="quick-icon"><Target size={20}/></span><span><strong>เริ่มวางเป้าหมาย</strong><small>ออมจ่ายเบี้ยและเตรียมเกษียณ</small></span><ArrowUpRight size={18}/></a><a href="#/services"><span className="quick-icon red"><Heart size={20}/></span><span><strong>สุขภาพกายและใจ</strong><small>รู้จักแนวทางบริการส่วนตัว</small></span><ArrowUpRight size={18}/></a><a href="#/knowledge"><span className="quick-icon warm"><BookOpen size={20}/></span><span><strong>ความรู้สำหรับบทใหม่</strong><small>ข่าวและเรื่องเกษียณที่เข้าใจง่าย</small></span><ArrowUpRight size={18}/></a></section>
+          <section className="quick-links overview-desktop-details" aria-label="ทางลัด"><a href="#/retirement"><span className="quick-icon"><Target size={20}/></span><span><strong>เริ่มวางเป้าหมาย</strong><small>ออมจ่ายเบี้ยและเตรียมเกษียณ</small></span><ArrowUpRight size={18}/></a><a href="#/services"><span className="quick-icon red"><Heart size={20}/></span><span><strong>สุขภาพกายและใจ</strong><small>รู้จักแนวทางบริการส่วนตัว</small></span><ArrowUpRight size={18}/></a><a href="#/knowledge"><span className="quick-icon warm"><BookOpen size={20}/></span><span><strong>ความรู้สำหรับบทใหม่</strong><small>ข่าวและเรื่องเกษียณที่เข้าใจง่าย</small></span><ArrowUpRight size={18}/></a></section>
+          <nav className="mobile-overview-shortcuts" aria-label="สำรวจเพิ่มเติม"><a href="#/policies"><FileText size={21}/><span>กรมธรรม์ทั้งหมด</span><ChevronRight size={16}/></a><a href="#/club/events"><Users size={21}/><span>กิจกรรมและเพื่อน</span><ChevronRight size={16}/></a><a href="#/knowledge"><BookOpen size={21}/><span>ข่าวและคลิป</span><ChevronRight size={16}/></a><a href="#/account"><ShieldCheck size={21}/><span>บัญชีและสรุปเบี้ย</span><ChevronRight size={16}/></a></nav>
         </>}
 
         {route === 'policies' && (selectedPolicy ? <PolicyDetails key={selectedPolicy.id} policy={selectedPolicy} ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/> : <PolicyCards ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/>)}
