@@ -41,3 +41,17 @@ export function useClubLocation() {
   }, []);
   return location;
 }
+
+export function useServiceLocation() {
+  const read = () => {
+    const parts = window.location.hash.replace(/^#\/?/, '').split('/');
+    return { section: parts[1] || 'home', id: parts[2] || '' };
+  };
+  const [location, setLocation] = useState(read);
+  useEffect(() => {
+    const update = () => setLocation(read());
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+  return location;
+}

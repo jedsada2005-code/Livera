@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   ArrowRight, ArrowUpRight, Bell, BookOpen, CalendarDays, Check, ChevronRight,
   CircleHelp, Clock3, Compass, Eye, EyeOff, FileText, Heart, LayoutDashboard,
-  LockKeyhole, MapPin, RotateCcw, Settings2, ShieldCheck,
+  RotateCcw, Settings2, ShieldCheck,
   Sparkles, Target, Users, Wallet, Plus, LoaderCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -15,6 +15,7 @@ import { useLedger } from './hooks/useLedger';
 import { usePlanning } from './hooks/usePlanning';
 import { useClub } from './hooks/useClub';
 import { ClubPage } from './pages/Club';
+import { useServices } from './hooks/useServices';
 import { RetirementPage } from './pages/Retirement';
 import { PaymentFlow } from './components/PaymentFlow';
 import { PolicyCards, PolicyDetails } from './pages/Policies';
@@ -22,6 +23,8 @@ import { PhotoHero } from './components/PhotoHero';
 import { ProgressRing } from './components/ProgressRing';
 import { outstanding, todayISO, formatDate } from './domain/ledger';
 import type { PolicySummary } from './domain/ledger';
+
+const ServicesPage = lazy(() => import('./pages/Services').then(module => ({default:module.ServicesPage})));
 
 const nav: { route: Route; label: string; icon: LucideIcon }[] = [
   { route: 'overview', label: 'ภาพรวม', icon: LayoutDashboard },
@@ -44,6 +47,7 @@ export default function App() {
   const ledger = useLedger();
   const planning = usePlanning();
   const club = useClub();
+  const serviceRequests = useServices();
   const { policies, totals } = ledger;
   const selectedPolicy = route === 'policies' ? policies.find(policy => policy.id === policyId) : undefined;
   const nextPolicy = [...policies].filter(policy => policy.nextDueISO !== null).sort((a,b) => a.nextDueISO!.localeCompare(b.nextDueISO!))[0];
@@ -84,7 +88,7 @@ export default function App() {
       <nav aria-label="เมนูหลัก" className="desktop-nav">{nav.map(({ route: value, label, icon: Icon }) =>
         <a href={`#/${value}`} key={value} className={`nav-item ${route === value ? 'active' : ''}`} aria-current={route === value ? 'page' : undefined}><Icon size={21} strokeWidth={1.7}/><span>{label}</span>{route === value && <span className="nav-active-dot"/>}</a>)}</nav>
       <div className="sidebar-club"><span className="eyebrow">A LIFE WELL PLANNED</span><p>ชีวิตบทใหม่<br/>เริ่มออกแบบได้วันนี้</p><a href="#/retirement">สำรวจแผนของคุณ <ArrowUpRight size={17}/></a><span className="sidebar-decoration" aria-hidden="true">✳</span></div>
-      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ครบ 5 ส่วน', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 3</span></div>
+      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ครบ 5 ส่วน', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 4</span></div>
     </aside>
 
     <div className="workspace">
@@ -96,7 +100,7 @@ export default function App() {
         <div className="page-header"><div><span className="eyebrow">{routeLabels[route].english}</span><h1 tabIndex={-1} ref={pageHeading}>{route === 'overview' ? `สวัสดี คุณ${member.name}` : selectedPolicy?.name ?? routeLabels[route].title}<span className="heading-dot">.</span></h1><p>{route === 'overview' ? 'ดูแลทุกก้าววันนี้ เพื่อชีวิตที่คุณเลือกในวันข้างหน้า' : route === 'policies' ? 'เข้าใจแผนของคุณ เห็นภาพครบในที่เดียว' : route === 'retirement' ? 'จากเป้าหมายในใจ สู่แผนที่ค่อย ๆ เป็นจริง' : route === 'club' ? 'พื้นที่ของบทสนทนา มิตรภาพ และประสบการณ์ใหม่' : 'ความรู้และผู้ช่วยดี ๆ สำหรับทุกช่วงชีวิต'}</p></div><div className="page-header-end">{route === 'overview' ? <><span className="date-label">{formatDate(todayISO(), true)}</span><button className="subtle-button" onClick={() => setPreferences(p => ({ ...p, hideAmounts: !p.hideAmounts }))}>{preferences.hideAmounts ? <Eye size={16}/> : <EyeOff size={16}/>}{preferences.hideAmounts ? 'แสดงยอดเงิน' : 'ซ่อนยอดเงิน'}</button></> : <Badge variant="blue">สมาชิก LIVERA</Badge>}</div></div>
 
         {ledger.error && <div className="storage-error" role="alert"><p>{ledger.error}</p><button className="button button-secondary" onClick={() => void ledger.refresh()}>ลองโหลดอีกครั้ง</button></div>}
-        <div className="route-stage" key={route === 'club' ? 'club' : `${route}/${policyId}`}>
+        <div className="route-stage" key={route === 'club' || route === 'services' ? route : `${route}/${policyId}`} >
         {route === 'overview' && <>
           <div className="overview-top-grid">
             <PhotoHero/>
@@ -126,19 +130,10 @@ export default function App() {
 
         {route === 'club' && <ClubPage club={club} onNotice={setNotice}/>}
 
-        {route === 'services' && <>
-          <div className="services-intro"><span className="item-icon icon-red"><Heart size={23}/></span><div><h2>เพราะชีวิตที่ดี มีมากกว่าแผนการเงิน</h2><p>สำรวจแนวทางบริการที่เชื่อมการเตรียมตัวกับการใช้ชีวิต</p></div></div>
-          <div className="services-grid">{[
-            { icon: Heart, tag: 'PRIVATE CONSULTATION', title: 'สุขภาพกายและใจ', body: 'แนวทางนัดปรึกษาส่วนตัวกับแพทย์หรือผู้เชี่ยวชาญ แยกจากกิจกรรมคลับ', round: 'รอบ 4 · บริการส่วนตัว', detail: 'เลือกสุขภาพกายหรือใจ เลือกสาขา แจ้งวันเวลาที่สะดวก ดูค่าบริการและสิทธิ แล้วส่งคำขอให้ประสานนัด\n\nยังไม่มีการนัดหรือส่งข้อมูลสุขภาพจริงใน Prototype', action: 'ดูขั้นตอนนัดส่วนตัว', color: 'red' },
-            { icon: ShieldCheck, tag: 'COVERAGE REVIEW', title: 'ทบทวนความคุ้มครอง', body: 'มองความต้องการและงบของคุณร่วมกับแผนเดิม ก่อนพิจารณาทางเลือก', round: 'รอบ 4 · บริการส่วนตัว', detail: 'วางแบบสำรวจความต้องการ งบ และข้อมูลที่ยินยอมให้ใช้ ก่อนให้ผู้เชี่ยวชาญประเมิน\n\nไม่มีการรับรองว่าจะรับประกันหรือคุ้มครองโรคประจำตัว และไม่ใช้ข้อมูลจากการปรึกษาแพทย์โดยปริยาย', action: 'ดูแนวทางประเมิน', color: 'blue' },
-            { icon: BookOpen, tag: 'KNOWLEDGE FOR LIFE', title: 'ข่าวและคลิปความรู้', body: 'ข่าวภาครัฐ เรื่องเกษียณ และคลิปสั้นที่ช่วยให้เข้าใจแผนของคุณ', round: 'รอบ 5 · ความรู้และบัญชี', detail: 'จะเพิ่มข่าวที่มีแหล่งข้อมูลและวันที่ พร้อมคลิปแนวตั้งที่มีคำบรรยายและเนื้อหาสรุป\n\nรอบนี้แสดงโครงหมวดหมู่ ยังไม่ได้ดึงข่าวหรือเล่นคลิปจริง', action: 'ดูแนวทางความรู้', color: 'warm' },
-            { icon: MapPin, tag: 'LIVING YOUR WAY', title: 'บ้านพักและบริการดูแล', body: 'สำรวจรูปแบบชีวิต ทําเล และระดับการดูแลที่อยากเตรียมไว้', round: 'แนวทางบริการระยะถัดไป', detail: 'การเปรียบเทียบบ้านพักและบริการดูแลจะใช้ข้อมูลราคา ระดับการดูแล และวันที่อัปเดตจากคู่ค้าจริง\n\nPrototype ยังไม่มีการจองห้องพักหรือรับประกันสิทธิเข้าพัก', action: 'ดูแนวทางบริการดูแล', color: 'sage' },
-          ].map(({ icon: Icon, title, tag, body, detail, action, color, round }) => <article key={title} className="panel service-card"><div className="service-card-top"><span className={`item-icon icon-${color}`}><Icon size={24}/></span><ArrowUpRight size={20}/></div><span className="eyebrow">{tag}</span><h2>{title}</h2><p>{body}</p><button className="text-link" onClick={() => feature(title, detail, round)}>{action}<ChevronRight size={17}/></button></article>)}</div>
-          <div className="privacy-note"><LockKeyhole size={22}/><div><strong>พื้นที่ส่วนตัวของคุณ ยังคงเป็นส่วนตัว</strong><p>ข้อมูลสุขภาพและการเงินไม่เปิดเผยใน Community หรือใช้เสนอขายโดยอัตโนมัติ</p></div></div>
-        </>}
+        {route === 'services' && <Suspense fallback={<p role="status">กำลังเปิดบริการส่วนตัว…</p>}><ServicesPage services={serviceRequests} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onNotice={setNotice} onFeature={feature}/></Suspense>}
 
         </div>
-        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 3 <span className="footer-dot">·</span> ข้อมูลสมมติทั้งหมด</span></footer>
+        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 4 <span className="footer-dot">·</span> ข้อมูลสมมติทั้งหมด</span></footer>
       </main>
     </div>
 
