@@ -1,11 +1,12 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import {
   ArrowRight, ArrowUpRight, Bell, BookOpen, CalendarDays, Check, ChevronRight,
-  CircleHelp, Clock3, Compass, Eye, EyeOff, FileText, Heart, LayoutDashboard,
+  CircleHelp, Clock3, Compass, Search, Eye, EyeOff, FileText, Heart, LayoutDashboard,
   RotateCcw, ShieldCheck,
   Sparkles, Target, Users, Wallet, Plus, LoaderCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { PolicyAreaTabs, ExploreTabs } from './components/AreaTabs';
 import { Badge, DemoNote, Logo, Modal, SectionTitle } from './components/ui';
 import { member, routeLabels } from './data/demo';
 import type { Route, Policy } from './data/demo';
@@ -26,6 +27,7 @@ import { ProgressRing } from './components/ProgressRing';
 import { outstanding, todayISO, formatDate } from './domain/ledger';
 import type { PolicySummary } from './domain/ledger';
 
+const Round6Page = lazy(() => import('./pages/Round6').then(module => ({default:module.Round6Page})));
 const KnowledgePage = lazy(() => import('./pages/Knowledge').then(module => ({default:module.KnowledgePage})));
 const AccountPage = lazy(() => import('./pages/Account').then(module => ({default:module.AccountPage})));
 const ServicesPage = lazy(() => import('./pages/Services').then(module => ({default:module.ServicesPage})));
@@ -35,7 +37,7 @@ const nav: { route: Route; label: string; icon: LucideIcon }[] = [
   { route: 'policies', label: 'กรมธรรม์', icon: FileText },
   { route: 'retirement', label: 'แผนเกษียณ', icon: Compass },
   { route: 'club', label: 'คลับ', icon: Users },
-  { route: 'services', label: 'บริการ', icon: Heart },
+  { route: 'explore', label: 'สำรวจ', icon: Search },
 ];
 const money = new Intl.NumberFormat('th-TH', { maximumFractionDigits: 2 });
 type DialogState = { kind: 'feature'; title: string; body: string; round: string } | { kind: 'reset' } | { kind: 'notifications' } | null;
@@ -55,6 +57,8 @@ export default function App() {
   const library = useKnowledge();
   const { policies, totals } = ledger;
   const selectedPolicy = route === 'policies' ? policies.find(policy => policy.id === policyId) : undefined;
+  const activeNav=route==='services'?'explore':route;
+  const pageTitle=route==='policies'&&policyId==='discover'?'ค้นหาแผนประกัน':selectedPolicy?.name??routeLabels[route].title;
   const nextPolicy = [...policies].filter(policy => policy.nextDueISO !== null).sort((a,b) => a.nextDueISO!.localeCompare(b.nextDueISO!))[0];
   const [paymentPolicy, setPaymentPolicy] = useState<Policy['id']>();
   const [resetting, setResetting] = useState(false);
@@ -69,10 +73,10 @@ export default function App() {
     return () => document.documentElement.classList.remove('text-large');
   }, [preferences.largeText]);
   useEffect(() => {
-    document.title = `${selectedPolicy?.name ?? routeLabels[route].title} · LIVERA`;
+    document.title = `${pageTitle} · LIVERA`;
     if (previousRoute.current !== `${route}/${policyId}`) pageHeading.current?.focus();
     previousRoute.current = `${route}/${policyId}`;
-  }, [route, policyId, selectedPolicy?.name]);
+  }, [route, policyId, pageTitle]);
   useEffect(() => {
     if (!notice) return;
     const timer = window.setTimeout(() => setNotice(''), 3500);
@@ -91,10 +95,10 @@ export default function App() {
       <div className="sidebar-divider"/>
       <div className="sidebar-label">YOUR PERSONAL SPACE</div>
       <nav aria-label="เมนูหลัก" className="desktop-nav">{nav.map(({ route: value, label, icon: Icon }) =>
-        <a href={`#/${value}`} key={value} className={`nav-item ${route === value ? 'active' : ''}`} aria-current={route === value ? 'page' : undefined}><Icon size={21} strokeWidth={1.7}/><span>{label}</span>{route === value && <span className="nav-active-dot"/>}</a>)}</nav>
+        <a href={`#/${value}`} key={value} className={`nav-item ${activeNav === value ? 'active' : ''}`} aria-current={activeNav === value ? 'page' : undefined}><Icon size={21} strokeWidth={1.7}/><span>{label}</span>{activeNav === value && <span className="nav-active-dot"/>}</a>)}</nav>
       <nav className="sidebar-secondary" aria-label="ความรู้และบัญชี"><a href="#/knowledge" className={route==='knowledge'?'active':''} aria-current={route==='knowledge'?'page':undefined}><BookOpen size={20}/>ศูนย์ความรู้</a><a href="#/account" className={route==='account'?'active':''} aria-current={route==='account'?'page':undefined}><ShieldCheck size={20}/>บัญชีของฉัน</a></nav>
       <div className="sidebar-club"><span className="eyebrow">A LIFE WELL PLANNED</span><p>ชีวิตบทใหม่<br/>เริ่มออกแบบได้วันนี้</p><a href="#/retirement">สำรวจแผนของคุณ <ArrowUpRight size={17}/></a><span className="sidebar-decoration" aria-hidden="true">✳</span></div>
-      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ทั้งกรมธรรม์ แผนเกษียณ คลับ บริการ และศูนย์ความรู้', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 5</span></div>
+      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ทั้งกรมธรรม์ แผนเกษียณ คลับ บริการ และศูนย์ความรู้', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 6</span></div>
     </aside>
 
     <div className="workspace">
@@ -103,10 +107,10 @@ export default function App() {
       </header>
 
       <main id="main-content" className="main-content">
-        <div className="page-header"><div><span className="eyebrow">{routeLabels[route].english}</span><h1 tabIndex={-1} ref={pageHeading}>{route === 'overview' ? `สวัสดี คุณ${member.name}` : selectedPolicy?.name ?? routeLabels[route].title}<span className="heading-dot">.</span></h1><p>{route === 'overview' ? 'ดูแลทุกก้าววันนี้ เพื่อชีวิตที่คุณเลือกในวันข้างหน้า' : route === 'policies' ? 'เข้าใจแผนของคุณ เห็นภาพครบในที่เดียว' : route === 'retirement' ? 'จากเป้าหมายในใจ สู่แผนที่ค่อย ๆ เป็นจริง' : route === 'club' ? 'พื้นที่ของบทสนทนา มิตรภาพ และประสบการณ์ใหม่' : route === 'account' ? 'ปรับพื้นที่ของคุณ และดูข้อมูลที่บันทึกไว้' : route === 'knowledge' ? 'เรื่องที่ควรรู้ สำหรับชีวิตบทต่อไป' : 'ความรู้และผู้ช่วยดี ๆ สำหรับทุกช่วงชีวิต'}</p></div><div className="page-header-end">{route === 'overview' ? <><span className="date-label">{formatDate(todayISO(), true)}</span><button className="subtle-button" onClick={() => setPreferences(p => ({ ...p, hideAmounts: !p.hideAmounts }))}>{preferences.hideAmounts ? <Eye size={16}/> : <EyeOff size={16}/>}{preferences.hideAmounts ? 'แสดงยอดเงิน' : 'ซ่อนยอดเงิน'}</button></> : <Badge variant="blue">สมาชิก LIVERA</Badge>}</div></div>
+        <div className="page-header"><div><span className="eyebrow">{routeLabels[route].english}</span><h1 tabIndex={-1} ref={pageHeading}>{route === 'overview' ? `สวัสดี คุณ${member.name}` : pageTitle}<span className="heading-dot">.</span></h1><p>{route === 'overview' ? 'ดูแลทุกก้าววันนี้ เพื่อชีวิตที่คุณเลือกในวันข้างหน้า' : route === 'policies' ? 'เข้าใจแผนของคุณ เห็นภาพครบในที่เดียว' : route === 'retirement' ? 'จากเป้าหมายในใจ สู่แผนที่ค่อย ๆ เป็นจริง' : route === 'club' ? 'พื้นที่ของบทสนทนา มิตรภาพ และประสบการณ์ใหม่' : route === 'account' ? 'ปรับพื้นที่ของคุณ และดูข้อมูลที่บันทึกไว้' : route === 'knowledge' ? 'เรื่องที่ควรรู้ สำหรับชีวิตบทต่อไป' : 'ความรู้และผู้ช่วยดี ๆ สำหรับทุกช่วงชีวิต'}</p></div><div className="page-header-end">{route === 'overview' ? <><span className="date-label">{formatDate(todayISO(), true)}</span><button className="subtle-button" onClick={() => setPreferences(p => ({ ...p, hideAmounts: !p.hideAmounts }))}>{preferences.hideAmounts ? <Eye size={16}/> : <EyeOff size={16}/>}{preferences.hideAmounts ? 'แสดงยอดเงิน' : 'ซ่อนยอดเงิน'}</button></> : <Badge variant="blue">สมาชิก LIVERA</Badge>}</div></div>
 
         {ledger.error && <div className="storage-error" role="alert"><p>{ledger.error}</p><button className="button button-secondary" onClick={() => void ledger.refresh()}>ลองโหลดอีกครั้ง</button></div>}
-        <div className="route-stage" key={route === 'club' || route === 'services' || route === 'knowledge' ? route : `${route}/${policyId}`} >
+        <div className="route-stage" key={route === 'club' || route === 'services' || route === 'knowledge' || route === 'explore' ? route : `${route}/${policyId}`} >
         {route === 'overview' && <>
           <div className="overview-top-grid">
             <PhotoHero/>
@@ -129,25 +133,27 @@ export default function App() {
           </section>
           <section className="club-teaser photo-club-teaser"><img src={`${import.meta.env.BASE_URL}images/retirement-club.webp`} alt="ภาพประกอบสมจริงของสมาชิกผู้สูงอายุทำกิจกรรมในบ้านพัก" loading="lazy"/><div className="club-teaser-heading"><span className="eyebrow">A LITTLE MORE TO LIFE</span><Badge>เฉพาะสมาชิก</Badge></div><h2>Retirement<br/><span>Luxury Club</span></h2><p>พบเพื่อนใหม่ เติมประสบการณ์ดี ๆ<br/>ทั้งพบกันจริงและออนไลน์</p><div className="teaser-event"><span className="mini-date"><b>28</b>NOV</span><span><strong>มื้อสายและชีวิตบทใหม่</strong><small>กิจกรรมตัวอย่าง · พบกันจริง</small></span></div><a className="text-link" href="#/club">สำรวจกิจกรรมคลับ <ArrowUpRight size={17}/></a></section></div>
           <section className="quick-links overview-desktop-details" aria-label="ทางลัด"><a href="#/retirement"><span className="quick-icon"><Target size={20}/></span><span><strong>เริ่มวางเป้าหมาย</strong><small>ออมจ่ายเบี้ยและเตรียมเกษียณ</small></span><ArrowUpRight size={18}/></a><a href="#/services"><span className="quick-icon red"><Heart size={20}/></span><span><strong>สุขภาพกายและใจ</strong><small>รู้จักแนวทางบริการส่วนตัว</small></span><ArrowUpRight size={18}/></a><a href="#/knowledge"><span className="quick-icon warm"><BookOpen size={20}/></span><span><strong>ความรู้สำหรับบทใหม่</strong><small>ข่าวและเรื่องเกษียณที่เข้าใจง่าย</small></span><ArrowUpRight size={18}/></a></section>
-          <nav className="mobile-overview-shortcuts" aria-label="สำรวจเพิ่มเติม"><a href="#/policies"><FileText size={21}/><span>กรมธรรม์ทั้งหมด</span><ChevronRight size={16}/></a><a href="#/club/events"><Users size={21}/><span>กิจกรรมและเพื่อน</span><ChevronRight size={16}/></a><a href="#/knowledge"><BookOpen size={21}/><span>ข่าวและคลิป</span><ChevronRight size={16}/></a><a href="#/account"><ShieldCheck size={21}/><span>บัญชีและสรุปเบี้ย</span><ChevronRight size={16}/></a></nav>
+          <nav className="mobile-overview-shortcuts" aria-label="สำรวจเพิ่มเติม"><a href="#/policies"><FileText size={21}/><span>กรมธรรม์ทั้งหมด</span><ChevronRight size={16}/></a><a href="#/club/events"><Users size={21}/><span>กิจกรรมและเพื่อน</span><ChevronRight size={16}/></a><a href="#/knowledge"><BookOpen size={21}/><span>ข่าวและคลิป</span><ChevronRight size={16}/></a><a href="#/retirement/future"><Wallet size={21}/><span>เงินปลายทาง</span><ChevronRight size={16}/></a></nav>
         </>}
 
-        {route === 'policies' && (selectedPolicy ? <PolicyDetails key={selectedPolicy.id} policy={selectedPolicy} ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/> : <PolicyCards ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/>)}
+        {route === 'policies' && (selectedPolicy ? <PolicyDetails key={selectedPolicy.id} policy={selectedPolicy} ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/> : policyId==='discover' ? <Suspense fallback={<p role="status">กำลังเปิดเส้นทางค้นหา…</p>}><Round6Page area="insurance" hideAmounts={preferences.hideAmounts} showAmounts={()=>setPreferences(p=>({...p,hideAmounts:false}))} onNotice={setNotice}/></Suspense> : <><PolicyAreaTabs/><PolicyCards ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/></>)}
 
-        {route === 'retirement' && <RetirementPage ledger={ledger} planning={planning} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onPayment={openPayment} onNotice={setNotice}/>}
+        {route === 'retirement' && (policyId===''||policyId==='future'?<Suspense fallback={<p role="status">กำลังเปิดแผนปลายทาง…</p>}><Round6Page area="future" hideAmounts={preferences.hideAmounts} showAmounts={()=>setPreferences(p=>({...p,hideAmounts:false}))} onNotice={setNotice}/></Suspense>:<RetirementPage ledger={ledger} planning={planning} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onPayment={openPayment} onNotice={setNotice}/>)}
+
+        {route === 'explore' && <Suspense fallback={<p role="status">กำลังเปิดพื้นที่สำรวจ…</p>}><Round6Page area="explore" hideAmounts={preferences.hideAmounts} showAmounts={()=>setPreferences(p=>({...p,hideAmounts:false}))} onNotice={setNotice}/></Suspense>}
 
         {route === 'club' && <ClubPage club={club} onNotice={setNotice}/>}
 
-        {route === 'services' && <Suspense fallback={<p role="status">กำลังเปิดบริการส่วนตัว…</p>}><ServicesPage services={serviceRequests} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onNotice={setNotice} onFeature={feature}/></Suspense>}
+        {route === 'services' && <><ExploreTabs current="services"/><Suspense fallback={<p role="status">กำลังเปิดบริการส่วนตัว…</p>}><ServicesPage services={serviceRequests} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onNotice={setNotice} onFeature={feature}/></Suspense></>}
 
         {route === 'knowledge' && <Suspense fallback={<p role="status">กำลังเปิดศูนย์ความรู้…</p>}><KnowledgePage library={library} id={policyId} onNotice={setNotice}/></Suspense>}
         {route === 'account' && <Suspense fallback={<p role="status">กำลังเปิดบัญชี…</p>}><AccountPage library={library} preferences={preferences} toggleAmounts={()=>setPreferences(p=>({...p,hideAmounts:!p.hideAmounts}))} toggleLarge={()=>setPreferences(p=>({...p,largeText:!p.largeText}))} resetDisplay={reset} resetLedger={()=>{setResetError('');setDialog({kind:'reset'});}} entries={ledger.entries} ledgerReady={!ledger.loading&&!ledger.error} amount={amount} onNotice={setNotice}/></Suspense>}
         </div>
-        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 5 <span className="footer-dot">·</span> ข้อมูลสาธิต · ความรู้มีแหล่งอ้างอิง</span></footer>
+        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 6 <span className="footer-dot">·</span> ข้อมูลสาธิต · ความรู้มีแหล่งอ้างอิง</span></footer>
       </main>
     </div>
 
-    <nav className="mobile-nav" aria-label="เมนูหลักบนมือถือ">{nav.map(({ route: value, label, icon: Icon }) => <a href={`#/${value}`} key={value} className={route === value ? 'active' : ''} aria-current={route === value ? 'page' : undefined}><span><Icon size={21} strokeWidth={route === value ? 2.15 : 1.65}/></span><small>{label}</small></a>)}</nav>
+    <nav className="mobile-nav" aria-label="เมนูหลักบนมือถือ">{nav.map(({ route: value, label, icon: Icon }) => <a href={`#/${value}`} key={value} className={activeNav === value ? 'active' : ''} aria-current={activeNav === value ? 'page' : undefined}><span><Icon size={21} strokeWidth={activeNav === value ? 2.15 : 1.65}/></span><small>{label}</small></a>)}</nav>
     {notice && <div className="toast" role="status"><Check size={18}/>{notice}</div>}
     {dialog && <Modal title={dialog.kind === 'notifications' ? 'การแจ้งเตือน' : dialog.kind === 'reset' ? 'คืนค่าประวัติสาธิต' : dialog.title} eyebrow={dialog.kind === 'feature' ? dialog.round : 'LIVERA DEMO'} onClose={() => setDialog(null)}>
       {dialog.kind === 'feature' && <><div className="feature-modal-icon"><Sparkles size={28}/></div><p className="feature-body">{dialog.body}</p><DemoNote/><button className="button button-primary modal-done" onClick={() => setDialog(null)}>เข้าใจแล้ว<Check size={17}/></button></>}

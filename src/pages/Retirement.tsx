@@ -1,3 +1,4 @@
+import { PlanningTabs } from '../components/PlanningTabs';
 import { MobileDisclosure } from '../components/MobileDisclosure';
 import { useMemo, useRef, useState } from 'react';
 import { ArrowRight, ArrowUpRight, CalendarDays, Check, ChevronDown, Compass, Download, Eye, Flag, Info, LockKeyhole, Save, Target, TrendingUp, Wallet } from 'lucide-react';
@@ -23,7 +24,7 @@ export function RetirementPage(props:Props){
   if(props.hideAmounts)return <section className="panel planner-locked"><LockKeyhole size={32}/><h2>แผนเงินอยู่ในพื้นที่ส่วนตัวของคุณ</h2><p>เปิดแสดงยอดก่อนดูหรือแก้ไขข้อมูลในเครื่องคำนวณ</p><button className="button button-primary" onClick={props.showAmounts}><Eye size={18}/>แสดงยอดและเปิดแผน</button></section>;
   return <div className="retirement-page">
     <section className="planning-hero"><div><span className="eyebrow">YOUR FUTURE, IN FOCUS</span><h2>ให้ชีวิตที่อยากใช้<br/>มีแผนที่มองเห็นได้</h2><p>เตรียมเบี้ยให้พร้อมวันนี้ แล้วค่อย ๆ เติมภาพวันเกษียณ</p></div><div className="planning-hero-photo"><img src={`${import.meta.env.BASE_URL}images/retirement-residence.webp`} alt="ภาพประกอบคู่ผู้สูงอายุใช้เวลาพักผ่อนในบ้านพัก"/><span>ภาพประกอบจำลองด้วย AI</span></div></section>
-    <nav className="planner-nav" aria-label="เลือกเครื่องมือวางแผน"><a href="#/retirement/goal" className={view==='goal'?'selected':''} aria-current={view==='goal'?'page':undefined}><Target size={20}/><span>ออมให้พอจ่ายเบี้ย<small>เป้าหมายงวดถัดไป</small></span></a><a href="#/retirement/calculator" className={view==='calculator'?'selected':''} aria-current={view==='calculator'?'page':undefined}><Compass size={20}/><span>วางเงินเกษียณ<small>สำรวจชีวิตระยะยาว</small></span></a></nav>
+    <PlanningTabs current={view}/>
     {props.planning.error&&<p className="storage-error" role="alert">{props.planning.error}</p>}
     {view==='goal'?<PremiumGoals key={revision} {...props}/>:<RetirementCalculator key={revision} {...props}/>}
     <div className="planner-data-actions"><span>แผนที่บันทึกอยู่เฉพาะเบราว์เซอร์นี้</span><button className="text-link" onClick={()=>setResetOpen(true)}>ล้างแผนเงินที่บันทึก</button></div>

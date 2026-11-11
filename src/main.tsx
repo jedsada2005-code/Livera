@@ -12,5 +12,6 @@ import './round3.css';
 import './round4.css';
 import './round5.css';
 import './mobile-compact.css';
+import './round6.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);
