@@ -38,19 +38,6 @@ export const totals = {
   remaining: policies.reduce((sum, policy) => sum + (policy.remaining ?? 0), 0),
 };
 
-export const events = [
-  { id: 'garden', type: 'in-person', tag: 'พบกันจริง', title: 'A little pause, a new perspective.',
-    subtitle: 'มื้อสายและบทสนทนาเรื่องชีวิตบทใหม่', date: '28 พ.ย. 2569', time: '10:00–12:00 น.',
-    location: 'สถานที่ตัวอย่าง · กรุงเทพฯ', month: 'NOV', day: '28',
-    description: 'ใช้เวลาร่วมกันในบรรยากาศสบาย ๆ แลกเปลี่ยนสิ่งที่อยากทำหลังเกษียณ และทำความรู้จักเพื่อนสมาชิก',
-  },
-  { id: 'online', type: 'online', tag: 'ออนไลน์', title: 'Your future, made clearer.',
-    subtitle: 'ทำความเข้าใจเงินเกษียณไปด้วยกัน', date: '12 ธ.ค. 2569', time: '19:00–20:00 น.',
-    location: 'กิจกรรมออนไลน์ตัวอย่าง', month: 'DEC', day: '12',
-    description: 'หัวข้อความรู้สำหรับสมาชิกที่เริ่มวางแผน พร้อมช่วงแลกเปลี่ยนคำถามทั่วไปเกี่ยวกับการเตรียมตัว',
-  },
-] as const;
-
 export const routeLabels: Record<Route, { title: string; english: string }> = {
   overview: { title: 'ภาพรวม', english: 'MY OVERVIEW' },
   policies: { title: 'กรมธรรม์ของฉัน', english: 'MY POLICIES' },

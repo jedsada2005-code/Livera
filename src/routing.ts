@@ -27,3 +27,17 @@ export function usePolicyId() {
   }, []);
   return id;
 }
+
+export function useClubLocation() {
+  const read = () => {
+    const parts = window.location.hash.replace(/^#\/?/, '').split('/');
+    return { section: parts[1] || 'events', id: parts[2] || '' };
+  };
+  const [location, setLocation] = useState(read);
+  useEffect(() => {
+    const update = () => setLocation(read());
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+  return location;
+}

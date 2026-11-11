@@ -2,17 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight, ArrowUpRight, Bell, BookOpen, CalendarDays, Check, ChevronRight,
   CircleHelp, Clock3, Compass, Eye, EyeOff, FileText, Heart, LayoutDashboard,
-  LockKeyhole, MapPin, MessageCircle, RotateCcw, Settings2, ShieldCheck,
-  Sparkles, Target, Users, Video, Wallet, Plus, LoaderCircle,
+  LockKeyhole, MapPin, RotateCcw, Settings2, ShieldCheck,
+  Sparkles, Target, Users, Wallet, Plus, LoaderCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Badge, DemoNote, Logo, Modal, SectionTitle } from './components/ui';
-import { events, member, routeLabels } from './data/demo';
+import { member, routeLabels } from './data/demo';
 import type { Route, Policy } from './data/demo';
 import { usePreferences } from './hooks/usePreferences';
 import { useRoute, usePolicyId } from './routing';
 import { useLedger } from './hooks/useLedger';
 import { usePlanning } from './hooks/usePlanning';
+import { useClub } from './hooks/useClub';
+import { ClubPage } from './pages/Club';
 import { RetirementPage } from './pages/Retirement';
 import { PaymentFlow } from './components/PaymentFlow';
 import { PolicyCards, PolicyDetails } from './pages/Policies';
@@ -41,6 +43,7 @@ export default function App() {
   const policyId = usePolicyId();
   const ledger = useLedger();
   const planning = usePlanning();
+  const club = useClub();
   const { policies, totals } = ledger;
   const selectedPolicy = route === 'policies' ? policies.find(policy => policy.id === policyId) : undefined;
   const nextPolicy = [...policies].filter(policy => policy.nextDueISO !== null).sort((a,b) => a.nextDueISO!.localeCompare(b.nextDueISO!))[0];
@@ -50,7 +53,6 @@ export default function App() {
   const { preferences, setPreferences, reset } = usePreferences();
   const [dialog, setDialog] = useState<DialogState>(null);
   const [notice, setNotice] = useState('');
-  const [clubFilter, setClubFilter] = useState('all');
   const pageHeading = useRef<HTMLHeadingElement>(null);
   const previousRoute = useRef(`${route}/${policyId}`);
   useEffect(() => {
@@ -71,8 +73,7 @@ export default function App() {
   const amount = (value: number) => preferences.hideAmounts ? '•••,•••' : money.format(value);
   const openPayment = (id: Policy['id']) => setPaymentPolicy(id);
   const feature = (title: string, body: string, round: string) => setDialog({ kind: 'feature', title, body, round });
-  const eventDetail = (event: typeof events[number]) => feature(event.subtitle,
-    `${event.description}\n\n${event.date} · ${event.time}\n${event.location}\n\nกิจกรรมนี้เป็นตัวอย่างสำหรับวางโครงหน้าจอ ยังไม่เปิดรับจองจริง`, 'รอบ 3 · คลับและชุมชน');
+
 
   return <div className={`app ${preferences.largeText ? 'large-text' : ''}`}>
     <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); pageHeading.current?.focus(); }}>ข้ามไปเนื้อหาหลัก</a>
@@ -83,7 +84,7 @@ export default function App() {
       <nav aria-label="เมนูหลัก" className="desktop-nav">{nav.map(({ route: value, label, icon: Icon }) =>
         <a href={`#/${value}`} key={value} className={`nav-item ${route === value ? 'active' : ''}`} aria-current={route === value ? 'page' : undefined}><Icon size={21} strokeWidth={1.7}/><span>{label}</span>{route === value && <span className="nav-active-dot"/>}</a>)}</nav>
       <div className="sidebar-club"><span className="eyebrow">A LIFE WELL PLANNED</span><p>ชีวิตบทใหม่<br/>เริ่มออกแบบได้วันนี้</p><a href="#/retirement">สำรวจแผนของคุณ <ArrowUpRight size={17}/></a><span className="sidebar-decoration" aria-hidden="true">✳</span></div>
-      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ครบ 5 ส่วน', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 2</span></div>
+      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ครบ 5 ส่วน', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 3</span></div>
     </aside>
 
     <div className="workspace">
@@ -95,7 +96,7 @@ export default function App() {
         <div className="page-header"><div><span className="eyebrow">{routeLabels[route].english}</span><h1 tabIndex={-1} ref={pageHeading}>{route === 'overview' ? `สวัสดี คุณ${member.name}` : selectedPolicy?.name ?? routeLabels[route].title}<span className="heading-dot">.</span></h1><p>{route === 'overview' ? 'ดูแลทุกก้าววันนี้ เพื่อชีวิตที่คุณเลือกในวันข้างหน้า' : route === 'policies' ? 'เข้าใจแผนของคุณ เห็นภาพครบในที่เดียว' : route === 'retirement' ? 'จากเป้าหมายในใจ สู่แผนที่ค่อย ๆ เป็นจริง' : route === 'club' ? 'พื้นที่ของบทสนทนา มิตรภาพ และประสบการณ์ใหม่' : 'ความรู้และผู้ช่วยดี ๆ สำหรับทุกช่วงชีวิต'}</p></div><div className="page-header-end">{route === 'overview' ? <><span className="date-label">{formatDate(todayISO(), true)}</span><button className="subtle-button" onClick={() => setPreferences(p => ({ ...p, hideAmounts: !p.hideAmounts }))}>{preferences.hideAmounts ? <Eye size={16}/> : <EyeOff size={16}/>}{preferences.hideAmounts ? 'แสดงยอดเงิน' : 'ซ่อนยอดเงิน'}</button></> : <Badge variant="blue">สมาชิก LIVERA</Badge>}</div></div>
 
         {ledger.error && <div className="storage-error" role="alert"><p>{ledger.error}</p><button className="button button-secondary" onClick={() => void ledger.refresh()}>ลองโหลดอีกครั้ง</button></div>}
-        <div className="route-stage" key={`${route}/${policyId}`}>
+        <div className="route-stage" key={route === 'club' ? 'club' : `${route}/${policyId}`}>
         {route === 'overview' && <>
           <div className="overview-top-grid">
             <PhotoHero/>
@@ -123,13 +124,7 @@ export default function App() {
 
         {route === 'retirement' && <RetirementPage ledger={ledger} planning={planning} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onPayment={openPayment} onNotice={setNotice}/>}
 
-        {route === 'club' && <>
-          <PhotoHero club/>
-          <SectionTitle title="กิจกรรมที่อยากชวนคุณมาเจอ" subtitle="รูปแบบและวันเวลาเป็นตัวอย่างสำหรับ Prototype"/>
-          <div className="filter-chips" role="group" aria-label="กรองรูปแบบกิจกรรม">{[{ value: 'all', label: 'ทั้งหมด' }, { value: 'in-person', label: 'พบกันจริง' }, { value: 'online', label: 'ออนไลน์' }].map(filter => <button key={filter.value} className={clubFilter === filter.value ? 'filter-chip selected' : 'filter-chip'} aria-pressed={clubFilter === filter.value} onClick={() => setClubFilter(filter.value)}>{filter.value === 'in-person' ? <MapPin size={15}/> : filter.value === 'online' ? <Video size={15}/> : <CalendarDays size={15}/>}{filter.label}</button>)}</div>
-          <div className="events-grid">{events.filter(event => clubFilter === 'all' || event.type === clubFilter).map(event => <article key={event.id} className={`panel event-card event-${event.type}`}><div className="event-visual"><div className="event-visual-copy"><span className="eyebrow">LIVERA CLUB</span><h3>{event.title}</h3></div><img className="event-photo" src={`${import.meta.env.BASE_URL}images/${event.type === 'online' ? 'retirement-residence' : 'retirement-club'}.webp`} alt="ภาพประกอบบรรยากาศการใช้ชีวิตหลังเกษียณ" loading="lazy"/><span className="event-date"><strong>{event.day}</strong>{event.month}</span></div><div className="event-body"><Badge variant={event.type === 'online' ? 'blue' : 'soft'}>{event.tag}</Badge><h3>{event.subtitle}</h3><p><CalendarDays size={15}/>{event.date} · {event.time}</p><p>{event.type === 'online' ? <Video size={15}/> : <MapPin size={15}/>}{event.location}</p><button className="text-link" onClick={() => eventDetail(event)}>ดูรายละเอียดตัวอย่าง<ArrowUpRight size={17}/></button></div></article>)}</div>
-          <section className="community-preview panel"><div className="community-icon"><MessageCircle size={27}/></div><div><span className="eyebrow">YOUR PEOPLE, YOUR SPACE</span><h2>พื้นที่ของคนที่เตรียมบทใหม่ไปด้วยกัน</h2><p>กลุ่มเตรียมเกษียณ งานอดิเรก และประสบการณ์ดูแล สำหรับลูกค้าเท่านั้น</p></div><button className="button button-secondary" onClick={() => feature('Community สำหรับสมาชิก', 'รอบที่ 3 จะเพิ่มกลุ่ม กระทู้ ความคิดเห็น และการรายงานโพสต์แบบสาธิต\n\nข้อมูลกรมธรรม์และสุขภาพส่วนตัวจะแยกจากพื้นที่ชุมชนเสมอ', 'รอบ 3 · คลับและชุมชน')}>ดูแนวทางชุมชน<ArrowUpRight size={16}/></button></section>
-        </>}
+        {route === 'club' && <ClubPage club={club} onNotice={setNotice}/>}
 
         {route === 'services' && <>
           <div className="services-intro"><span className="item-icon icon-red"><Heart size={23}/></span><div><h2>เพราะชีวิตที่ดี มีมากกว่าแผนการเงิน</h2><p>สำรวจแนวทางบริการที่เชื่อมการเตรียมตัวกับการใช้ชีวิต</p></div></div>
@@ -143,7 +138,7 @@ export default function App() {
         </>}
 
         </div>
-        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 2 <span className="footer-dot">·</span> ข้อมูลสมมติทั้งหมด</span></footer>
+        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 3 <span className="footer-dot">·</span> ข้อมูลสมมติทั้งหมด</span></footer>
       </main>
     </div>
 
