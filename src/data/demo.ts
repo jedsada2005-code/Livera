@@ -1,4 +1,4 @@
-export type Route = 'overview' | 'policies' | 'retirement' | 'club' | 'services';
+export type Route = 'overview' | 'policies' | 'retirement' | 'club' | 'services' | 'knowledge' | 'account';
 
 export const member = {
   name: 'เมย์', fullName: 'เมธาวี ใจดี', initials: 'ม',
@@ -43,5 +43,7 @@ export const routeLabels: Record<Route, { title: string; english: string }> = {
   policies: { title: 'กรมธรรม์ของฉัน', english: 'MY POLICIES' },
   retirement: { title: 'แผนเกษียณ', english: 'MY NEXT CHAPTER' },
   club: { title: 'LIVERA Club', english: 'BELONG & CONNECT' },
+  knowledge: { title: 'ศูนย์ความรู้', english: 'THE NEXT CHAPTER JOURNAL' },
+  account: { title: 'บัญชีของฉัน', english: 'YOUR PERSONAL SPACE' },
   services: { title: 'บริการสำหรับคุณ', english: 'HERE FOR YOU' },
 };
