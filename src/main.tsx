@@ -7,5 +7,6 @@ import '@fontsource/noto-sans-thai/700.css';
 import App from './App';
 import './styles.css';
 import './round1.css';
+import './round2.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>);

@@ -3,15 +3,17 @@ import {
   ArrowRight, ArrowUpRight, Bell, BookOpen, CalendarDays, Check, ChevronRight,
   CircleHelp, Clock3, Compass, Eye, EyeOff, FileText, Heart, LayoutDashboard,
   LockKeyhole, MapPin, MessageCircle, RotateCcw, Settings2, ShieldCheck,
-  SlidersHorizontal, Sparkles, Target, UserRound, Users, Video, Wallet, Plus, LoaderCircle,
+  Sparkles, Target, Users, Video, Wallet, Plus, LoaderCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Badge, DemoNote, FutureAction, Logo, Modal, SectionTitle } from './components/ui';
+import { Badge, DemoNote, Logo, Modal, SectionTitle } from './components/ui';
 import { events, member, routeLabels } from './data/demo';
 import type { Route, Policy } from './data/demo';
 import { usePreferences } from './hooks/usePreferences';
 import { useRoute, usePolicyId } from './routing';
 import { useLedger } from './hooks/useLedger';
+import { usePlanning } from './hooks/usePlanning';
+import { RetirementPage } from './pages/Retirement';
 import { PaymentFlow } from './components/PaymentFlow';
 import { PolicyCards, PolicyDetails } from './pages/Policies';
 import { PhotoHero } from './components/PhotoHero';
@@ -38,6 +40,7 @@ export default function App() {
   const route = useRoute();
   const policyId = usePolicyId();
   const ledger = useLedger();
+  const planning = usePlanning();
   const { policies, totals } = ledger;
   const selectedPolicy = route === 'policies' ? policies.find(policy => policy.id === policyId) : undefined;
   const nextPolicy = [...policies].filter(policy => policy.nextDueISO !== null).sort((a,b) => a.nextDueISO!.localeCompare(b.nextDueISO!))[0];
@@ -80,7 +83,7 @@ export default function App() {
       <nav aria-label="เมนูหลัก" className="desktop-nav">{nav.map(({ route: value, label, icon: Icon }) =>
         <a href={`#/${value}`} key={value} className={`nav-item ${route === value ? 'active' : ''}`} aria-current={route === value ? 'page' : undefined}><Icon size={21} strokeWidth={1.7}/><span>{label}</span>{route === value && <span className="nav-active-dot"/>}</a>)}</nav>
       <div className="sidebar-club"><span className="eyebrow">A LIFE WELL PLANNED</span><p>ชีวิตบทใหม่<br/>เริ่มออกแบบได้วันนี้</p><a href="#/retirement">สำรวจแผนของคุณ <ArrowUpRight size={17}/></a><span className="sidebar-decoration" aria-hidden="true">✳</span></div>
-      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ครบ 5 ส่วน', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 1</span></div>
+      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ครบ 5 ส่วน', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 2</span></div>
     </aside>
 
     <div className="workspace">
@@ -118,12 +121,7 @@ export default function App() {
 
         {route === 'policies' && (selectedPolicy ? <PolicyDetails key={selectedPolicy.id} policy={selectedPolicy} ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/> : <PolicyCards ledger={ledger} amount={amount} onPayment={openPayment} onNotice={setNotice}/>)}
 
-        {route === 'retirement' && <>
-          <section className="retirement-banner"><span className="eyebrow">MAKE ROOM FOR YOUR FUTURE</span><h2>เป้าหมายต่างกัน<br/>แผนที่เตรียมก็ต่างกัน</h2><p>แยกเงินให้พอจ่ายเบี้ยวันนี้ กับเงินที่อยากมีไว้ใช้ในวันเกษียณ</p><span className="retirement-star" aria-hidden="true">✳</span></section>
-          <div className="planning-grid"><article className="panel planning-card"><span className="item-icon icon-red"><Target size={24}/></span><Badge variant="soft">เป้าหมายระยะใกล้</Badge><h2>ออมให้พอจ่ายเบี้ย</h2><p>กันเงินทีละเดือน ให้พร้อมก่อนถึงกำหนดงวดถัดไป</p><div className="goal-preview"><div><span>เบี้ยงวดตัวอย่าง</span><strong>{amount(120000)} บาท</strong></div><div><span>เงินที่ระบุว่ากันไว้</span><strong>{amount(30000)} บาท</strong></div><div><span>เวลาที่เหลือ</span><strong>9 เดือน</strong></div><div className="goal-result"><span>ตัวอย่างควรกันเพิ่ม</span><strong>{amount(10000)} <small>บาท/เดือน</small></strong></div></div><FutureAction onClick={() => feature('Goal ออมจ่ายเบี้ย', 'ตัวอย่าง: เบี้ย 120,000 บาท หักเงินที่กันไว้ 30,000 บาท เหลือ 9 เดือน จึงกันเพิ่ม 10,000 บาทต่อเดือน โดยไม่คิดผลตอบแทน\n\nรอบที่ 2 จะเพิ่มการกรอกและคำนวณจริง เงินที่กันไว้เป็นข้อมูลผู้ใช้ระบุ ไม่ใช่ยอดเงินฝากกับ LIVERA', 'รอบ 2 · แผนเงิน')}>ดูแนวทาง Goal</FutureAction></article>
-          <article className="panel planning-card"><span className="item-icon icon-blue"><Compass size={24}/></span><Badge variant="blue">เป้าหมายระยะยาว</Badge><h2>เงินใช้หลังเกษียณ</h2><p>เห็นภาพเงินที่ต้องเตรียม จากรูปแบบชีวิตที่คุณเลือก</p><div className="retirement-input-preview"><div><UserRound size={17}/><span>อายุปัจจุบัน</span><strong>35 ปี</strong></div><div><CalendarDays size={17}/><span>อายุเกษียณ</span><strong>60 ปี</strong></div><div><Wallet size={17}/><span>รายจ่ายในมูลค่าเงินวันนี้</span><strong>{amount(30000)} บาท/เดือน</strong></div><div><SlidersHorizontal size={17}/><span>ปรับเงินเฟ้อและระยะใช้เงิน</span><Check size={17}/></div></div><FutureAction onClick={() => feature('เครื่องคำนวณเงินเกษียณ', 'จะเพิ่มช่องอายุ ค่าใช้จ่าย เงินเฟ้อ เงินออม และรายรับตามเวลา พร้อมผลคำนวณที่ปรับสมมติฐานได้\n\nรอบนี้เป็นการวางโครงหน้าจอ ยังไม่มีผลประเมินความพร้อมทางการเงินจริง', 'รอบ 2 · แผนเงิน')} secondary>ดูแนวทางแผนเกษียณ</FutureAction></article></div>
-          <DemoNote>ตัวเลขในหน้านี้เป็นตัวอย่างอธิบายการออกแบบ ยังไม่ใช่แผนเฉพาะบุคคล</DemoNote>
-        </>}
+        {route === 'retirement' && <RetirementPage ledger={ledger} planning={planning} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onPayment={openPayment} onNotice={setNotice}/>}
 
         {route === 'club' && <>
           <PhotoHero club/>
@@ -145,7 +143,7 @@ export default function App() {
         </>}
 
         </div>
-        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 1 <span className="footer-dot">·</span> ข้อมูลสมมติทั้งหมด</span></footer>
+        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 2 <span className="footer-dot">·</span> ข้อมูลสมมติทั้งหมด</span></footer>
       </main>
     </div>
 
