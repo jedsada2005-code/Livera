@@ -1,0 +1,14 @@
+{
+  "tool": "built-in image generation",
+  "date": "2026-11-11",
+  "prompts": [
+    {
+      "key": "residence",
+      "prompt": "Use case: photorealistic-natural. Create an authentic, serious editorial lifestyle photograph for a premium Thai retirement-planning application. Landscape 3:2 high resolution. A dignified Thai couple aged about 68–75, with realistic wrinkles and grey hair, seated together on a comfortable cream sofa in the spacious shared living room of a contemporary senior residence in Thailand. One holds a book while the other talks, warm relaxed natural expressions, not exaggerated laughter, candid moment. Smart comfortable ordinary clothing in navy, cream, muted terracotta. Beautiful but believable senior residence with teak details, good daylight, accessible uncluttered layout, indoor plants, soft garden greenery seen through glass. The older adults sit on the right half, generous darker softly defocused interior negative space on the left for later website text. Natural documentary photography, 50mm lens look, truthful skin texture, restrained warm color grading, sophisticated architectural magazine quality. All people are fictional; no logos or signage. No text, no watermarks, no graphics, no illustration, no cartoon, no CGI, no plastic skin, no staged medical procedures, no luxury mansion excess."
+    },
+    {
+      "key": "club",
+      "prompt": "Use case: photorealistic-natural. Create a serious, candid premium editorial photograph for a Thai retirement community club website. Landscape 3:2 high resolution. Four dignified Thai seniors aged 62–76, different natural faces and grey hairstyles, enjoying a small art-and-conversation session at a wooden table in the shaded garden terrace of a contemporary senior residence in Thailand. A friendly younger Thai community coordinator stands nearby listening. People are engaged in conversation or looking at a simple watercolor sketch, relaxed genuine subtle smiles, not posing at camera or exaggerated laughter. Refined comfortable linen and navy clothing, natural ageing and realistic skin texture. Accessible terrace, comfortable chairs, tasteful tropical landscaping and warm low-rise residential architecture in the background. Soft natural late-morning light, authentic candid photography, editorial documentary style, muted warm color palette, eye-level shot. All people are fictional. No text, no brand, no watermark, no cartoon, no illustration, no CGI, no comic effects, no plastic skin, no hospital ward."
+    }
+  ]
+}

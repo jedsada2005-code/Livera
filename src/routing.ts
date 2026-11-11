@@ -16,3 +16,14 @@ export function useRoute() {
   }, []);
   return route;
 }
+
+export function usePolicyId() {
+  const read = () => window.location.hash.replace(/^#\/?/, '').split('/')[1] ?? '';
+  const [id, setId] = useState(read);
+  useEffect(() => {
+    const update = () => setId(read());
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+  return id;
+}
