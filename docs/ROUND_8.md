@@ -10,7 +10,7 @@ Version 0.8.0. Adds the housing portion of the agreed rounds 6–10. This releas
 - `#/explore/housing/<id>/budget`: separate input/result views, 5–20 years, 1–2 occupants, starting year shown in Buddhist Era, four hypothetical payment structures, explicit monetary inputs and annual price-growth assumption.
 - `#/explore/housing/budgets`: one latest saved budget per project, reopen/edit or explicitly remove. A journey import keeps a separate snapshot when a catalog budget is later removed.
 
-The live catalog replaces the old Round 6 residence preview. Existing Explore/services tabs and all owned-policy/insurance/knowledge flows remain in place. Source descriptions, photos and corrections are documented in [ROUND_8_SOURCES.md](ROUND_8_SOURCES.md).
+The live catalog replaces the old Round 6 residence preview. Existing Explore/services tabs and all owned-policy/insurance/knowledge flows remain in place. The old housing placeholder shortcut in Services now links directly to the working housing catalog. Source descriptions, photos and corrections are documented in [ROUND_8_SOURCES.md](ROUND_8_SOURCES.md).
 
 ## Calculation contract
 
