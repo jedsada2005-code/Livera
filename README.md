@@ -1,12 +1,27 @@
-# LIVERA — Round 7 Prototype
+# LIVERA — Round 8 Prototype
 
 แอปเตรียมชีวิตเกษียณ ธีมแดง–น้ำเงิน สำหรับทดลองบนมือถือและคอมพิวเตอร์
 
-**[เปิดแอปออนไลน์](https://jedsada2005-code.github.io/Livera/?v=0.7.0)**
+**[เปิดแอปออนไลน์](https://jedsada2005-code.github.io/Livera/?v=0.8.0)**
+
+## รอบ 8: ที่พักและงบ 5–20 ปี
+
+**[ค้นหาที่พัก](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/explore)** · **[งบที่บันทึก](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/explore/housing/budgets)**
+
+- Jin Wellbeing County และ The Aspen Tree พร้อมภาพถ่ายจริงจากโครงการ ค้นหาชื่อ/ทำเล กรองประเภท และบันทึกสถานที่
+- รายละเอียดแยกรู้จักสถานที่ รูปแบบสิทธิ/ค่าใช้จ่าย และคำถามก่อนตัดสินใจ
+- เครื่องทำงบ 5–20 ปี: รายเดือน รายปี ซื้อกรรมสิทธิ์ หรือสิทธิพักอาศัย/เช่าระยะยาว ตามวิธีจ่ายที่ผู้ใช้ต้องการจำลอง
+- แยกเงินก้อนแรก ยอดประจำ ค่าดูแลต่อคน ค่าใช้จ่ายอื่น เงินประกันคืนได้ และสมมติฐานขึ้นราคา
+- ลองเทียบ 5/10/15/20 ปี เปิดตารางจ่ายรายปี บันทึกงบล่าสุดต่อสถานที่ และนำสำเนางบไปแผนปลายทาง
+- เป้าหมายเปลี่ยนจะแสดงเตือนว่างบเดิมยังไม่ตรง รองรับซ่อนยอด/ตัวอักษรใหญ่ และเก็บตารางกับรายละเอียดรองไว้ในเมนูเปิดเพิ่ม
+
+ราคาแพ็กเกจปัจจุบันยังรอใบเสนอราคาที่มีรายละเอียดครบ ผลคำนวณทั้งหมดจึงเป็นงบจากสมมติฐานที่ผู้ใช้กรอก ไม่ใช่ราคาเสนอขายจากโครงการ และยังไม่คำนวณเงินออม/ส่วนที่ขาดรวมทุกแหล่ง (รอบ 9)
+
+รายละเอียดและผลตรวจ: [docs/ROUND_8.md](docs/ROUND_8.md) · แหล่งข้อมูล/ภาพ: [docs/ROUND_8_SOURCES.md](docs/ROUND_8_SOURCES.md)
 
 ## รอบ 7: ค้นหาและเปรียบเทียบประกัน
 
-**[ค้นหาแผนประกัน](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/policies/discover)** · **[แผนที่บันทึก](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/policies/discover/saved)** · **[เปรียบเทียบ](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/policies/discover/compare)**
+**[ค้นหาแผนประกัน](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/policies/discover)** · **[แผนที่บันทึก](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/policies/discover/saved)** · **[เปรียบเทียบ](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/policies/discover/compare)**
 
 - แผนสะสมทรัพย์จริง 6 รายการจาก AIA และเมืองไทยประกันชีวิต พร้อมโลโก้และลิงก์ต้นทาง
 - ค้นหาชื่อ/คำใกล้เคียง กรองบริษัท ช่วงอายุ ระยะจ่ายเบี้ย และระยะคุ้มครอง
@@ -21,7 +36,7 @@
 
 ## รอบ 6: โครง UX และข้อมูล
 
-**[สำรวจที่พัก](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/explore)** · **[เส้นทางเงินปลายทาง](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/retirement/future)** · **[ค้นหาแผนใหม่](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/policies/discover)**
+**[สำรวจที่พัก](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/explore)** · **[เส้นทางเงินปลายทาง](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/retirement/future)** · **[ค้นหาแผนใหม่](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/policies/discover)**
 
 เมนูหลัก 5 ช่อง พร้อมเส้นทางเลือกที่พัก → ตั้งเป้าหมาย 5–20 ปี → เพิ่มแหล่งเงิน → สรุปข้อมูล มีภาพโครงการจริงพร้อมแหล่งอ้างอิง และแยกข่าว/คลิปเป็นสองทางเข้า ข้อมูลเส้นทางเก็บแยกจากแผนเดิม
 
@@ -37,7 +52,7 @@
 
 ## รอบ 5: ข่าว คลิป และบัญชี
 
-**[เปิดศูนย์ความรู้](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/knowledge)** · **[บัญชีของฉัน](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/account)**
+**[เปิดศูนย์ความรู้](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/knowledge)** · **[บัญชีของฉัน](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/account)**
 
 - ข่าว/บทความคัดสรร 3 เรื่อง มีแหล่งอ้างอิงและวันที่ ตรวจสอบแหล่งข้อมูล 11 พฤศจิกายน 2569
 - คลิปข้อความแนวตั้ง MP4 2 เรื่อง เรื่องละ 24 วินาที เล่น/หยุด เลื่อนเวลา ดูต่อหลังโหลดใหม่ พร้อมสคริปต์อ่าน ไม่มีเสียงและไม่เล่นอัตโนมัติ
@@ -60,7 +75,7 @@
 - แยก IndexedDB ของบริการ ไม่ดึงคำปรึกษาสุขภาพไปใช้ทบทวนประกันหรือ Community อัตโนมัติ
 - ตรวจ revision รายการซ้ำ วันที่ และเวลานัดซ้อน พร้อมซ่อนรายละเอียดเมื่อซ่อนยอดเงิน
 
-**[เปิดบริการส่วนตัว](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/services)** · **[คำขอของฉัน](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/services/requests)**
+**[เปิดบริการส่วนตัว](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/services)** · **[คำขอของฉัน](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/services/requests)**
 
 รายละเอียด `docs/ROUND_4.md` ใช้ข้อมูลตัวอย่างเท่านั้น ไม่มีการนัด การให้คำปรึกษา การพิจารณารับประกัน หรือการชำระเงินจริง
 
@@ -73,7 +88,7 @@
 - รายการของฉันรวมกิจกรรม โพสต์ที่บันทึก กระทู้ของฉัน โพสต์ที่ซ่อน และรายงาน
 - เก็บข้อมูลใน IndexedDB แยกจากประวัติเบี้ยและแผนเงิน มีปุ่มคืนค่าคลับแยก
 
-**[เปิด Community](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/club/community)** · **[เปิดกิจกรรมคลับ](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/club/events)**
+**[เปิด Community](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/club/community)** · **[เปิดกิจกรรมคลับ](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/club/events)**
 
 รายละเอียดขอบเขตและผลตรวจใน `docs/ROUND_3.md` ทั้งการลงทะเบียนและบทสนทนายังอยู่เฉพาะเบราว์เซอร์ ไม่มีผู้จัดหรือสมาชิกจริงรับข้อความ
 
@@ -87,7 +102,7 @@
 - บันทึกแผนในเบราว์เซอร์ ดาวน์โหลด CSV และล้างเฉพาะแผนเงิน
 - ปิดผล/ช่องกรอกเมื่อซ่อนยอด ป้องกันบันทึกผลเก่าที่ยังไม่คำนวณหลังแก้ไข
 
-เปิดตรงได้ที่ [Goal](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/retirement/goal) หรือ [เครื่องคำนวณ](https://jedsada2005-code.github.io/Livera/?v=0.7.0#/retirement/calculator) รายละเอียดสูตรและขอบเขตใน `docs/ROUND_2.md`
+เปิดตรงได้ที่ [Goal](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/retirement/goal) หรือ [เครื่องคำนวณ](https://jedsada2005-code.github.io/Livera/?v=0.8.0#/retirement/calculator) รายละเอียดสูตรและขอบเขตใน `docs/ROUND_2.md`
 
 ## รอบที่ 1 เพิ่มอะไร
 

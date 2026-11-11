@@ -1,15 +1,18 @@
 import { residences, fundingOptions, providers } from '../data/catalog.ts';
 import { findInsurancePlan } from '../data/insuranceCatalog.ts';
+import { readHousingBudget } from './housing.ts';
+import type { HousingBudget } from './housing.ts';
 import { validateMoney } from './catalog.ts';
 import type { FundingRecord, FundingKind } from './catalog.ts';
-export type JourneyDraft={version:1;residenceId:string|null;years:number;targetAge:number;occupants:1|2;funding:FundingRecord[];interestedInsurer:string|null;interestedPlanIds:string[];updatedAt:string|null};
-export const emptyJourney=():JourneyDraft=>({version:1,residenceId:null,years:10,targetAge:60,occupants:1,funding:[],interestedInsurer:null,interestedPlanIds:[],updatedAt:null});
-export type JourneyAction={type:'target';residenceId:string|null;years:number;targetAge:number;occupants:1|2}|{type:'funding';records:FundingRecord[]}|{type:'interest';providerId:string}|{type:'plan-interest';planId:string;value:boolean};
+export type JourneyDraft={version:1;residenceId:string|null;years:number;targetAge:number;occupants:1|2;funding:FundingRecord[];interestedInsurer:string|null;interestedPlanIds:string[];housingBudget:HousingBudget|null;updatedAt:string|null};
+export const emptyJourney=():JourneyDraft=>({version:1,residenceId:null,years:10,targetAge:60,occupants:1,funding:[],interestedInsurer:null,interestedPlanIds:[],housingBudget:null,updatedAt:null});
+export type JourneyAction={type:'target';residenceId:string|null;years:number;targetAge:number;occupants:1|2}|{type:'funding';records:FundingRecord[]}|{type:'interest';providerId:string}|{type:'plan-interest';planId:string;value:boolean}|{type:'housing-budget';budget:HousingBudget|null};
 export function readJourney(raw:unknown):JourneyDraft{
   if(!raw||typeof raw!=='object')throw new Error('ข้อมูลเส้นทางไม่ถูกต้อง');const r=raw as JourneyDraft;
   if(r.version!==1||r.residenceId!==null&&!residences.some(h=>h.id===r.residenceId)||!Number.isInteger(r.years)||r.years<5||r.years>20||!Number.isInteger(r.targetAge)||r.targetAge<18||r.targetAge>100||![1,2].includes(r.occupants)||!Array.isArray(r.funding)||r.funding.length>5||r.interestedInsurer!==null&&!providers.some(p=>p.id===r.interestedInsurer&&p.kind==='insurer')||r.updatedAt!==null&&(typeof r.updatedAt!=='string'||!Number.isFinite(Date.parse(r.updatedAt))))throw new Error('ข้อมูลเส้นทางหรือเวอร์ชันไม่ถูกต้อง');
   const interestedPlanIds=r.interestedPlanIds===undefined?[]:r.interestedPlanIds;
   if(!Array.isArray(interestedPlanIds)||interestedPlanIds.length>6||new Set(interestedPlanIds).size!==interestedPlanIds.length||interestedPlanIds.some(id=>typeof id!=='string'||!findInsurancePlan(id)))throw new Error('รายการแผนที่สนใจไม่ถูกต้อง');
+  const housingBudget=r.housingBudget===undefined||r.housingBudget===null?null:readHousingBudget(r.housingBudget);
   const kinds=new Set<FundingKind>();const ids=new Set<string>();
   const funding=r.funding.map(record=>{
     if(!record||!Object.hasOwn(fundingOptions,record.kind)||kinds.has(record.kind)||typeof record.id!=='string'||record.id!==`fund-${record.kind}`||ids.has(record.id)||record.measure!==fundingOptions[record.kind].measure||record.linkedPolicyId!==null)throw new Error('รายการแหล่งเงินซ้ำหรือไม่ถูกต้อง');
@@ -18,13 +21,14 @@ export function readJourney(raw:unknown):JourneyDraft{
     if(record.kind==='insurance'&&record.amountSatang.value!==null)throw new Error('ประกันต้องรอตารางผลประโยชน์');
     kinds.add(record.kind);ids.add(record.id);return {id:record.id,kind:record.kind,measure:record.measure,linkedPolicyId:null,amountSatang:{value:record.amountSatang.value,status:record.amountSatang.status}} as FundingRecord;
   });
-  return {version:1,residenceId:r.residenceId,years:r.years,targetAge:r.targetAge,occupants:r.occupants,funding,interestedInsurer:r.interestedInsurer,interestedPlanIds:[...interestedPlanIds],updatedAt:r.updatedAt};
+  return {version:1,residenceId:r.residenceId,years:r.years,targetAge:r.targetAge,occupants:r.occupants,funding,interestedInsurer:r.interestedInsurer,interestedPlanIds:[...interestedPlanIds],housingBudget,updatedAt:r.updatedAt};
 }
 export function applyJourney(current:JourneyDraft,action:JourneyAction,now=new Date().toISOString()){
   const next=structuredClone(current);
   if(action.type==='target'){if(!Number.isInteger(action.years)||action.years<5||action.years>20)throw new Error('กรอกระยะเวลาตั้งแต่ 5 ถึง 20 ปี');if(!Number.isInteger(action.targetAge)||action.targetAge<18||action.targetAge>100)throw new Error('กรอกอายุเป้าหมายตั้งแต่ 18 ถึง 100 ปี');next.residenceId=action.residenceId;next.years=action.years;next.targetAge=action.targetAge;next.occupants=action.occupants;}
   else if(action.type==='funding')next.funding=structuredClone(action.records);
   else if(action.type==='interest')next.interestedInsurer=action.providerId;
+  else if(action.type==='housing-budget'){next.housingBudget=action.budget===null?null:readHousingBudget(action.budget);if(next.housingBudget){next.residenceId=next.housingBudget.plan.residenceId;next.years=next.housingBudget.plan.years;next.occupants=next.housingBudget.plan.occupants;}}
   else {if(!findInsurancePlan(action.planId))throw new Error('ไม่พบแผนนี้');next.interestedPlanIds=action.value?[...new Set([...(next.interestedPlanIds??[]),action.planId])]:(next.interestedPlanIds??[]).filter(id=>id!==action.planId);}
   next.updatedAt=now;return readJourney(next);
 }

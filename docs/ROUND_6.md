@@ -43,3 +43,7 @@ All providers have `relationship: example`. Public reference images and descript
 - News and clip tabs show 3 and 2 items; existing MP4 loads with 24-second metadata. Legacy service URLs highlight Explore.
 - Privacy lock and eleven relevant routes checked at 320px with large text; document width equals viewport width. Temporary display preferences are restored after testing.
 - Public deployment proof and screenshots: workspace `outputs/round6-verification`.
+
+### Media correction in Round 8
+
+The original Aspen building reference was later found labeled as generated/rendered imagery on the source page. It is no longer used in the live catalog. Round 8 replaces it with the official site's real interior photograph and corrects the shared residence media record; see [ROUND_8_SOURCES.md](ROUND_8_SOURCES.md).

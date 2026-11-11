@@ -27,6 +27,7 @@ import { ProgressRing } from './components/ProgressRing';
 import { outstanding, todayISO, formatDate } from './domain/ledger';
 import type { PolicySummary } from './domain/ledger';
 
+const HousingCatalog = lazy(() => import('./pages/HousingCatalog').then(module => ({default:module.HousingCatalog})));
 const InsuranceDiscovery = lazy(() => import('./pages/InsuranceDiscovery').then(module => ({default:module.InsuranceDiscovery})));
 const Round6Page = lazy(() => import('./pages/Round6').then(module => ({default:module.Round6Page})));
 const KnowledgePage = lazy(() => import('./pages/Knowledge').then(module => ({default:module.KnowledgePage})));
@@ -99,7 +100,7 @@ export default function App() {
         <a href={`#/${value}`} key={value} className={`nav-item ${activeNav === value ? 'active' : ''}`} aria-current={activeNav === value ? 'page' : undefined}><Icon size={21} strokeWidth={1.7}/><span>{label}</span>{activeNav === value && <span className="nav-active-dot"/>}</a>)}</nav>
       <nav className="sidebar-secondary" aria-label="ความรู้และบัญชี"><a href="#/knowledge" className={route==='knowledge'?'active':''} aria-current={route==='knowledge'?'page':undefined}><BookOpen size={20}/>ศูนย์ความรู้</a><a href="#/account" className={route==='account'?'active':''} aria-current={route==='account'?'page':undefined}><ShieldCheck size={20}/>บัญชีของฉัน</a></nav>
       <div className="sidebar-club"><span className="eyebrow">A LIFE WELL PLANNED</span><p>ชีวิตบทใหม่<br/>เริ่มออกแบบได้วันนี้</p><a href="#/retirement">สำรวจแผนของคุณ <ArrowUpRight size={17}/></a><span className="sidebar-decoration" aria-hidden="true">✳</span></div>
-      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ทั้งกรมธรรม์ แผนเกษียณ คลับ บริการ และศูนย์ความรู้', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 7</span></div>
+      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ทั้งกรมธรรม์ แผนเกษียณ คลับ บริการ และศูนย์ความรู้', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 8</span></div>
     </aside>
 
     <div className="workspace">
@@ -141,7 +142,7 @@ export default function App() {
 
         {route === 'retirement' && (policyId===''||policyId==='future'?<Suspense fallback={<p role="status">กำลังเปิดแผนปลายทาง…</p>}><Round6Page area="future" hideAmounts={preferences.hideAmounts} showAmounts={()=>setPreferences(p=>({...p,hideAmounts:false}))} onNotice={setNotice}/></Suspense>:<RetirementPage ledger={ledger} planning={planning} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onPayment={openPayment} onNotice={setNotice}/>)}
 
-        {route === 'explore' && <Suspense fallback={<p role="status">กำลังเปิดพื้นที่สำรวจ…</p>}><Round6Page area="explore" hideAmounts={preferences.hideAmounts} showAmounts={()=>setPreferences(p=>({...p,hideAmounts:false}))} onNotice={setNotice}/></Suspense>}
+        {route === 'explore' && <Suspense fallback={<p role="status">กำลังเปิดพื้นที่สำรวจ…</p>}><HousingCatalog hideAmounts={preferences.hideAmounts} showAmounts={()=>setPreferences(p=>({...p,hideAmounts:false}))} onNotice={setNotice}/></Suspense>}
 
         {route === 'club' && <ClubPage club={club} onNotice={setNotice}/>}
 
@@ -150,7 +151,7 @@ export default function App() {
         {route === 'knowledge' && <Suspense fallback={<p role="status">กำลังเปิดศูนย์ความรู้…</p>}><KnowledgePage library={library} id={policyId} onNotice={setNotice}/></Suspense>}
         {route === 'account' && <Suspense fallback={<p role="status">กำลังเปิดบัญชี…</p>}><AccountPage library={library} preferences={preferences} toggleAmounts={()=>setPreferences(p=>({...p,hideAmounts:!p.hideAmounts}))} toggleLarge={()=>setPreferences(p=>({...p,largeText:!p.largeText}))} resetDisplay={reset} resetLedger={()=>{setResetError('');setDialog({kind:'reset'});}} entries={ledger.entries} ledgerReady={!ledger.loading&&!ledger.error} amount={amount} onNotice={setNotice}/></Suspense>}
         </div>
-        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 7 <span className="footer-dot">·</span> ข้อมูลสาธิต · ความรู้มีแหล่งอ้างอิง</span></footer>
+        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 8 <span className="footer-dot">·</span> ข้อมูลสาธิต · ความรู้มีแหล่งอ้างอิง</span></footer>
       </main>
     </div>
 
