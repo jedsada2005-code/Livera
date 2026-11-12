@@ -101,7 +101,7 @@ export default function App() {
         <a href={`#/${value}`} key={value} className={`nav-item ${activeNav === value ? 'active' : ''}`} aria-current={activeNav === value ? 'page' : undefined}><Icon size={21} strokeWidth={1.7}/><span>{label}</span>{activeNav === value && <span className="nav-active-dot"/>}</a>)}</nav>
       <nav className="sidebar-secondary" aria-label="ความรู้และบัญชี"><a href="#/knowledge" className={route==='knowledge'?'active':''} aria-current={route==='knowledge'?'page':undefined}><BookOpen size={20}/>ศูนย์ความรู้</a><a href="#/account" className={route==='account'?'active':''} aria-current={route==='account'?'page':undefined}><ShieldCheck size={20}/>บัญชีของฉัน</a></nav>
       <div className="sidebar-club"><span className="eyebrow">A LIFE WELL PLANNED</span><p>ชีวิตบทใหม่<br/>เริ่มออกแบบได้วันนี้</p><a href="#/retirement">สำรวจแผนของคุณ <ArrowUpRight size={17}/></a><span className="sidebar-decoration" aria-hidden="true">✳</span></div>
-      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ทั้งกรมธรรม์ แผนเกษียณ คลับ บริการ และศูนย์ความรู้', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 9</span></div>
+      <div className="sidebar-bottom"><button className="support-button" onClick={() => feature('ติดต่อทีม LIVERA', 'ช่องทางประสานงานและช่วยเหลือสมาชิกจะเชื่อมต่อในรอบถัดไป ขณะนี้คุณสามารถทดลองเมนูและดูข้อมูลสาธิตได้ทั้งกรมธรรม์ แผนเกษียณ คลับ บริการ และศูนย์ความรู้', 'โครงบริการสมาชิก')}><CircleHelp size={20}/>ให้เราช่วยคุณ</button><span className="build-tag"><span/>PROTOTYPE · ROUND 10</span></div>
     </aside>
 
     <div className="workspace">
@@ -149,10 +149,10 @@ export default function App() {
 
         {route === 'services' && <><ExploreTabs current="services"/><Suspense fallback={<p role="status">กำลังเปิดบริการส่วนตัว…</p>}><ServicesPage services={serviceRequests} amount={amount} hideAmounts={preferences.hideAmounts} showAmounts={() => setPreferences(p => ({...p,hideAmounts:false}))} onNotice={setNotice} onFeature={feature}/></Suspense></>}
 
-        {route === 'knowledge' && <Suspense fallback={<p role="status">กำลังเปิดศูนย์ความรู้…</p>}><KnowledgePage library={library} id={policyId} onNotice={setNotice}/></Suspense>}
+        {route === 'knowledge' && <Suspense fallback={<p role="status">กำลังเปิดศูนย์ความรู้…</p>}><KnowledgePage largeText={preferences.largeText} library={library} id={policyId} onNotice={setNotice}/></Suspense>}
         {route === 'account' && <Suspense fallback={<p role="status">กำลังเปิดบัญชี…</p>}><AccountPage library={library} preferences={preferences} toggleAmounts={()=>setPreferences(p=>({...p,hideAmounts:!p.hideAmounts}))} toggleLarge={()=>setPreferences(p=>({...p,largeText:!p.largeText}))} resetDisplay={reset} resetLedger={()=>{setResetError('');setDialog({kind:'reset'});}} entries={ledger.entries} ledgerReady={!ledger.loading&&!ledger.error} amount={amount} onNotice={setNotice}/></Suspense>}
         </div>
-        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 9 <span className="footer-dot">·</span> ข้อมูลสาธิต · ความรู้มีแหล่งอ้างอิง</span></footer>
+        <footer className="page-footer"><span>© LIVERA · A New Era of Living</span><span>ต้นแบบรอบ 10 <span className="footer-dot">·</span> ข้อมูลสาธิต · ความรู้มีแหล่งอ้างอิง</span></footer>
       </main>
     </div>
 

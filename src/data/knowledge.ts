@@ -1,11 +1,13 @@
-export const checkedOn = '2026-11-11';
-export const topics = { retirement: 'เตรียมเกษียณ', money: 'วางแผนเงิน', government: 'ภาครัฐ' } as const;
+export const checkedOn = '2026-11-12';
+export const topics = { retirement: 'เตรียมเกษียณ', money: 'วางแผนเงิน', government: 'ภาครัฐ', living: 'ชีวิตและที่พัก' } as const;
 export type Topic = keyof typeof topics;
 export type KnowledgeItem = {
   id: string; kind: 'article' | 'clip'; topic: Topic; title: string; summary: string;
   source: string; sourceTitle: string; sourceUrl: string; publishedOn?: string;
   minutes: number; sections: { title: string; body: string }[];
   action: { label: string; href: string }; duration?: number; media?: string;
+  editorial?: boolean; hasAudio?: boolean;
+  cover?: { path: string; alt: string; credit: string; sourceUrl?: string };
 };
 const retirementSource = { source: 'ธนาคารแห่งประเทศไทย', sourceTitle: 'การวางแผนเกษียณ', sourceUrl: 'https://www.bot.or.th/th/satang-story/money-plan/retirement.html' };
 const moneySource = { source: 'ธนาคารแห่งประเทศไทย', sourceTitle: 'การวางแผนการเงิน', sourceUrl: 'https://www.bot.or.th/th/satang-story/money-plan/planning-steps.html' };
@@ -15,7 +17,7 @@ export const knowledge: KnowledgeItem[] = [
       { title: 'เริ่มจากชีวิตประจำวัน', body: 'ลองจดค่าใช้จ่ายที่ยังต้องมีหลังหยุดทำงาน แล้วแยกค่าใช้จ่ายพิเศษ เช่น การดูแลสุขภาพและซ่อมบ้าน เพื่อเห็นภาพเงินที่ต้องเตรียมชัดขึ้น' },
       { title: 'มองรายรับไปพร้อมกัน', body: 'รวบรวมรายรับหลังเกษียณที่คาดว่าจะมี และตรวจเงื่อนไขของแต่ละแหล่งก่อนนำมาใส่แผน ตัวเลขที่ยังไม่ยืนยันควรแยกไว้ต่างหาก' },
       { title: 'เผื่ออนาคตที่เปลี่ยนไป', body: 'เงินเฟ้อและจำนวนปีที่ใช้ชีวิตหลังเกษียณมีผลต่อเงินที่ต้องเตรียม ลองเปลี่ยนสมมติฐานในเครื่องคำนวณ แล้วกลับมาทบทวนเมื่อสถานการณ์เปลี่ยน' },
-    ], action: { label: 'ลองคำนวณแผนเกษียณ', href: '#/retirement/calculator' } },
+    ], action: { label: 'ลองคำนวณแผนเกษียณ', href: '#/retirement/accumulation' } },
   { id: 'money-routine', kind: 'article', topic: 'money', title: 'เป้าหมายเล็ก ๆ ที่ทำต่อได้ทุกเดือน', summary: 'รู้จุดเริ่มต้น ตั้งยอดและเวลา แล้วทบทวนให้เหมาะกับชีวิต', ...moneySource, minutes: 2,
     sections: [
       { title: 'รู้ว่าเงินไปไหน', body: 'บันทึกรายรับ รายจ่าย สินทรัพย์ และหนี้สิน เพื่อเห็นฐานะการเงินของตัวเองก่อนจัดสรรเงินให้แต่ละเป้าหมาย' },
@@ -33,7 +35,7 @@ export const knowledge: KnowledgeItem[] = [
       { title: '00:00 · อยากใช้ชีวิตแบบไหน', body: 'ลองนึกถึงรายจ่ายต่อเดือน และค่าใช้จ่ายพิเศษหลังเกษียณ' },
       { title: '00:08 · จะมีรายรับจากไหน', body: 'รวบรวมรายรับที่คาดว่าจะมี แล้วตรวจเงื่อนไขก่อนใส่ในแผน' },
       { title: '00:16 · ต้องเตรียมเผื่อแค่ไหน', body: 'ลองเปลี่ยนเงินเฟ้อและจำนวนปีหลังเกษียณ เพื่อเห็นหลายภาพอนาคต' },
-    ], action: { label: 'ลองปรับแผนของฉัน', href: '#/retirement/calculator' } },
+    ], action: { label: 'ลองปรับแผนของฉัน', href: '#/retirement/accumulation' } },
   { id: 'clip-money', kind: 'clip', topic: 'money', title: 'เป้าหมายที่เริ่มได้วันนี้', summary: 'จากความตั้งใจ สู่ยอดและวันที่ที่ค่อย ๆ ทำตามได้', ...moneySource, minutes: 1, duration: 24, media: 'money-goal',
     sections: [
       { title: '00:00 · รู้จุดเริ่มต้น', body: 'จดรายรับ รายจ่าย และภาระที่มี ก่อนเริ่มตั้งเป้าหมาย' },
@@ -41,3 +43,38 @@ export const knowledge: KnowledgeItem[] = [
       { title: '00:16 · กลับมาทบทวน', body: 'ตรวจความคืบหน้า และปรับแผนเมื่อชีวิตเปลี่ยนไป' },
     ], action: { label: 'เริ่ม Goal ออมจ่ายเบี้ย', href: '#/retirement/goal' } },
 ];
+
+const liveraSource = (title: string, path: string) => ({ source: 'LIVERA Journal', sourceTitle: title, sourceUrl: `https://jedsada2005-code.github.io/Livera/${path}`, publishedOn: '2026-11-12', editorial: true });
+knowledge.push(
+  { id: 'capital-and-income', kind: 'article', topic: 'money', title: 'เงินก้อนกับรายรับรายเดือน นับอย่างไรให้ไม่ซ้ำ', summary: 'ก่อนรวมเงินออม PVD และประกัน ลองแยกว่าอะไรมีอยู่วันเกษียณ และอะไรจะได้รับภายหลัง', ...liveraSource('วิธีอ่านแผนรวมเงิน LIVERA', '#/retirement/accumulation'), minutes: 2,
+    sections: [
+      { title: 'เริ่มจากวันที่เงินพร้อมใช้', body: 'ในแผน LIVERA เงินที่มีอยู่ ณ วันเกษียณอยู่ในกลุ่มเงินตั้งต้น ส่วนเงินบำนาญหรือเงินที่ทยอยรับภายหลังเป็นรายรับตามงวด จึงไม่บวกรายรับหลายปีเป็นเงินก้อนพร้อมใช้ในวันแรก' },
+      { title: 'ตรวจแต่ละแหล่งก่อนรวม', body: 'ใส่ยอดและสิทธิที่ยืนยันได้จากเอกสารของตนเอง PVD ต้องแยกส่วนลูกจ้าง นายจ้าง และสิทธิที่ได้รับ ส่วนประกันใช้เงินรับและเบี้ยที่ยังต้องจ่ายตามเวลา ไม่ใช้ยอดเบี้ยสะสมแทนผลประโยชน์ที่จะได้รับ' },
+      { title: 'ดูความพอใช้เป็นรายช่วง', body: 'เปรียบเทียบรายรับกับรายจ่ายในแต่ละช่วง แล้วลองเปลี่ยนสมมติฐานเงินเฟ้อและผลตอบแทน เครื่องมือนี้จำลองจากข้อมูลที่กรอก ไม่ยืนยันสิทธิหรือรับรองผลตอบแทน' },
+    ], action: { label: 'เปิดแผนรวมเงินของฉัน', href: '#/retirement/accumulation' } },
+  { id: 'residence-budget', kind: 'article', topic: 'living', title: 'บ้านหลังเกษียณ เริ่มจากชีวิตที่อยากอยู่', summary: 'ก่อนทำงบ 5–20 ปี แยกเงินก้อน ค่าใช้จ่ายประจำ และค่าดูแลให้ชัดเจน', ...liveraSource('เช็กลิสต์ทำงบที่พัก LIVERA', '#/explore'), minutes: 2,
+    cover: { path: 'providers/jin-garden.jpg', alt: 'อาคารและสวนภายใน Jin Wellbeing County', credit: 'ภาพสถานที่จริง: Jin Wellbeing County · ใช้ประกอบเรื่องที่พัก', sourceUrl: 'https://www.jinwellbeing.com/about/' },
+    sections: [
+      { title: 'เลือกวิถีชีวิตก่อนตัวเลข', body: 'อยากอยู่คนเดียวหรือกับคู่ ต้องการพื้นที่ส่วนตัว การเดินทาง หรือกิจกรรมแบบไหน จดสิ่งที่จำเป็นแล้วนำไปถามสถานที่จริง รูปประกอบเป็น Jin Wellbeing County ไม่ใช่หลักฐานว่ามีแพ็กเกจหรือราคาเฉพาะให้ซื้อในแอป' },
+      { title: 'แยกค่าใช้จ่ายก่อนรวม', body: 'ขอใบเสนอราคาที่ระบุสิทธิพักอาศัย จำนวนคน ระยะเวลา สิ่งที่รวมและไม่รวม แยกเงินก้อนแรก ค่าที่พักประจำ ค่าดูแลต่อคน ค่าใช้จ่ายอื่น และเงินประกันที่อาจคืนได้ ตามเงื่อนไขของแต่ละแห่ง' },
+      { title: 'ลองหลายระยะเวลา', body: 'ใช้เครื่องทำงบ LIVERA เปรียบเทียบ 5 / 10 / 15 / 20 ปี โดยระบุสมมติฐานราคาและการขึ้นราคาเอง แล้วบันทึกงบไปประกอบแผนรวมเงิน ตัวเลขที่คำนวณเป็นงบสมมติ ไม่ใช่ใบเสนอราคาจากโครงการ' },
+    ], action: { label: 'สำรวจที่พักและลองทำงบ', href: '#/explore' } },
+  { id: 'policy-review-checklist', kind: 'article', topic: 'retirement', title: 'ทบทวนกรมธรรม์ ก่อนเปลี่ยนแผนชีวิต', summary: 'รวมเอกสาร ตรวจงวดเบี้ย และแยกยอดเวนคืนออกจากเงินที่จะได้รับเมื่อครบสัญญา', ...liveraSource('เช็กลิสต์อ่านข้อมูลกรมธรรม์ใน LIVERA', '#/policies'), minutes: 2,
+    sections: [
+      { title: 'เอกสารอยู่ครบหรือยัง', body: 'เตรียมหน้าตารางกรมธรรม์ ตารางผลประโยชน์ และประวัติชำระเบี้ย ตรวจชื่อผู้เอาประกัน ผู้รับผลประโยชน์ และกำหนดชำระจากเอกสารล่าสุด ข้อมูลที่กรอกในแอปต้องเทียบกับเอกสารจริงก่อนใช้ตัดสินใจ' },
+      { title: 'ยอดบันทึกไม่ใช่ยอดยืนยัน', body: 'LIVERA รุ่นทดลองให้บันทึกการชำระและแนบหลักฐาน รายการรอตรวจยังไม่ได้รับการยืนยันจากบริษัทประกัน และสรุปเบี้ยในแอปไม่ใช่หนังสือรับรองลดหย่อนภาษี' },
+      { title: 'ถามให้ครบก่อนเวนคืน', body: 'แยกมูลค่าเวนคืน ณ วันที่อ้างอิงออกจากเงินครบสัญญาหรือเงินบำนาญตามกำหนด ขอข้อมูลปัจจุบันเรื่องผลประโยชน์ ความคุ้มครองที่จะสิ้นสุด และภาระที่เกี่ยวข้องจากบริษัทประกันก่อนตัดสินใจ' },
+    ], action: { label: 'เปิดกรมธรรม์ของฉัน', href: '#/policies' } },
+  { id: 'clip-money-streams', kind: 'clip', topic: 'money', title: 'อย่ารวมเงินก้อนกับบำนาญซ้ำกัน', summary: 'แยกวันที่เงินพร้อมใช้ ก่อนรวมภาพการเกษียณใน 24 วินาที', ...liveraSource('วิธีอ่านแผนรวมเงิน LIVERA', '#/retirement/accumulation'), minutes: 1, duration: 24, media: 'money-streams', hasAudio: true,
+    sections: [
+      { title: '00:00 · แยกเงินก้อน', body: 'เงินก้อนวันเกษียณ กับบำนาญรายเดือน เป็นเงินคนละช่วงเวลา' },
+      { title: '00:08 · ใส่ตามเวลา', body: 'ใส่เงินออม กองทุน และประกัน ตามยอดและวันที่คาดว่าจะได้รับ' },
+      { title: '00:16 · ดูว่าพอใช้ไหม', body: 'เทียบรายรับกับรายจ่าย แล้วลองปรับสมมติฐานในแผนของคุณ' },
+    ], action: { label: 'ลองแผนรวมเงิน', href: '#/retirement/accumulation' } },
+  { id: 'clip-housing', kind: 'clip', topic: 'living', title: 'ก่อนเลือกบ้านหลังเกษียณ ต้องถามอะไร', summary: 'ชีวิตที่อยากอยู่ ค่าใช้จ่าย และระยะเวลา สามเรื่องที่ควรคุยก่อน', ...liveraSource('เช็กลิสต์ทำงบที่พัก LIVERA', '#/explore'), minutes: 1, duration: 24, media: 'housing-checklist', hasAudio: true,
+    sections: [
+      { title: '00:00 · ชีวิตที่อยากอยู่', body: 'บ้านหลังเกษียณที่เหมาะ เริ่มจากชีวิตที่คุณอยากอยู่' },
+      { title: '00:08 · แยกค่าใช้จ่าย', body: 'ถามเงินก้อนแรก ค่ารายเดือน และค่าดูแล ว่ารวมอะไรบ้าง' },
+      { title: '00:16 · ลองทำงบ', body: 'ลองทำงบห้าถึงยี่สิบปี แล้วขอราคาจริงก่อนตัดสินใจ' },
+    ], action: { label: 'สำรวจที่พัก', href: '#/explore' } },
+);
