@@ -41,7 +41,7 @@ export function HousingEstimator({place,housing,journey,hideAmounts,showAmounts,
       const state=await housing.run({type:'budget',plan:calculated});
       const budget=state.budgets.find(b=>b.plan.residenceId===place.id)!;
       setSavedMessage('บันทึกงบล่าสุดในเบราว์เซอร์นี้แล้ว');
-      if(toJourney){await journey.run({type:'housing-budget',budget});onNotice('นำงบสมมติและเป้าหมายที่พักไปไว้ในแผนปลายทางแล้ว');window.location.hash='/retirement/future/summary';}
+      if(toJourney){await journey.run({type:'housing-budget',budget});const {commitAccumulation}=await import('../data/accumulationDatabase');await commitAccumulation({type:'housing',budget});onNotice('นำงบสมมติและเป้าหมายที่พักไปไว้ในแผนปลายทางแล้ว');window.location.hash='/retirement/accumulation/housing';}
       else onNotice('บันทึกงบที่พักแล้ว');
     }catch(e){setError(e instanceof Error?e.message:'บันทึกงบไม่สำเร็จ กรุณาลองใหม่');}
   };

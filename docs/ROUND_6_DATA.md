@@ -57,3 +57,7 @@ These are typed interfaces for subsequent implementation, not active entitlement
 ## Persistence boundary
 
 `JourneyDraft` version 1 stores only residence ID, horizon, target age, occupants, one interested insurer and starter funding records. Read validation whitelists fields and rejects bad versions, unknown IDs, duplicate categories, mismatched units and invalid amounts. Actions update only their own group of fields. Existing databases and source records are never migrated or overwritten by Round 6.
+
+## Implemented in Round 9
+
+The active normalized model is now `src/domain/accumulation.ts` with its monthly engine in `accumulationProjection.ts`, and housing in `housing.ts`. The earlier `futureContracts.ts` interfaces remain design references rather than the persisted runtime shape. Round 9 uses an independent validated store and explicit idempotent import of starter records, preserving all existing databases. See [ROUND_9.md](ROUND_9.md) for actual cashflow conventions, completeness gates, source fields and limitations.

@@ -1,5 +1,5 @@
 import type { Evidence, BenefitCashflow, FundingKind } from './catalog';
-// Detailed contracts reserved for rounds 8–9. Round 6 collects only a small starter draft.
+// Historical design references. Active persisted R8/R9 models are housing.ts and accumulation.ts; see docs/ROUND_9.md.
 export type Money=Evidence<number>; // Integer satang; null means unknown, never zero.
 export type RuleVersion={id:string;kind:'tax'|'sso';jurisdiction:'TH';effectiveFrom:string;effectiveUntil:string|null;checkedOn:string;sourceUrl:string};
 export type SourceLink={id:string;kind:FundingKind;origin:'member'|'owned-policy'|'statement';linkedRecordId:string|null;alreadyIncludedInOpeningBalance:boolean};

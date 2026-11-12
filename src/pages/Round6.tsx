@@ -22,7 +22,7 @@ export function Round6Page({area,hideAmounts,showAmounts,onNotice}:{area:'future
   const props={journey,onNotice};
   if(area==='future'&&hideAmounts)return <section className="panel planner-locked"><ShieldCheck size={30}/><h2>แผนปลายทางอยู่ในพื้นที่ส่วนตัว</h2><p>เปิดแสดงยอดก่อนเพิ่มหรือดูข้อมูลแหล่งเงิน</p><button className="button button-primary" onClick={showAmounts}><Eye size={17}/>แสดงยอดและเปิดแผน</button></section>;
   return <div className={`round6-page round6-${area}`}>
-    <PlanningTabs current="future"/>
+    <PlanningTabs current="future"/><a className="round6-inline-destination" href="#/retirement/accumulation"><Layers3 size={21}/><span><strong>เปิดเครื่องรวมเงินปลายทาง</strong><small>คำนวณเงินออมหลายแหล่งร่วมกับงบที่พัก</small></span><ArrowRight size={17}/></a>
     {journey.error&&<div className="storage-error" role="alert"><p>{journey.error}</p><button className="button button-secondary" onClick={()=>void journey.refresh()}>ลองโหลดอีกครั้ง</button><button className="text-link" onClick={()=>setResetOpen(true)}>คืนค่าเฉพาะเส้นทางนี้</button></div>}
     {journey.loading?<p role="status">กำลังเปิดเส้นทางของคุณ…</p>:<FutureJourney step={location.id||'goal'} {...props}/>}
     <div className="round6-footnote"><span>เส้นทางเงินปลายทาง · รายชื่อผู้ให้บริการเป็นตัวอย่าง ยังไม่ยืนยันสถานะคู่สัญญา</span>{area==='future'&&<button className="text-link" disabled={journey.loading||journey.busy} onClick={()=>setResetOpen(true)}>คืนค่าเส้นทางนี้</button>}</div>

@@ -1,0 +1,17 @@
+import { sourceFields } from './accumulation.ts';
+import type { AccumulationState } from './accumulation.ts';
+import type { projectAccumulation } from './accumulationProjection.ts';
+function cell(v:string|number){const text=typeof v==='string'&&/^[\s]*[=+@\-]/.test(v)?`'${v}`:String(v);return `"${text.replace(/"/g,'""')}"`;}
+export function buildAccumulationCsv(state:AccumulationState,r:ReturnType<typeof projectAccumulation>,demo=false){
+  if(r.status!=='complete')throw new Error('เติมข้อมูลให้ครบก่อนดาวน์โหลดผลรวม');
+  const g=state.goal;const rows:(string|number)[][]=[['LIVERA',demo?'ตัวอย่างสมมติ ไม่ใช่ข้อมูลผู้ใช้':'ประมาณการจากข้อมูลที่ผู้ใช้ระบุ',r.modelVersion],['เดือนตั้งต้น',g.asOfMonth],['อายุปัจจุบัน',g.age!],['อายุเกษียณ',g.targetAge!],['อายุปลายแผน',g.endAge!],['รายจ่ายต่อเดือน บาท',g.livingSatang!/100],['ฐานราคาค่าครองชีพ',g.livingBasis],['เงินเฟ้อ %/ปี',g.inflationBps!/100],['ผลตอบแทนหลังเกษียณ %/ปี',g.postReturnBps!/100],['ผลตอบแทนเงินออมเพิ่ม %/ปี',g.extraReturnBps!/100],['เงิน ณ เกษียณ บาท',r.knownAssetsSatang!/100],['เงินตั้งต้นที่ต้องมี บาท',r.requiredCapitalSatang!/100],['ส่วนขาด บาท',r.gapSatang!/100],['ออมเพิ่ม บาท/เดือน',r.additionalMonthlySatang===null?'เริ่มเกษียณแล้ว':r.additionalMonthlySatang/100],[],['ปีเริ่มงวด','อายุ','เงินต้นงวด','รายรับ','ค่าที่พักรวมเงินประกัน','รายจ่ายอื่น','เบี้ยจากแผน','ผลตอบแทน','เงินปลายงวด']];
+  for(const y of r.years)rows.push([y.month,y.age,y.openingSatang/100,y.incomeSatang/100,y.housingSatang/100,y.livingSatang/100,y.premiumSatang/100,y.returnSatang/100,y.closingSatang/100]);
+  rows.push([],['ชื่อแหล่งเงิน','สถานะ','เหตุผล','ยอด ณ เกษียณ บาท','ถอนจ่ายเบี้ยก่อนเกษียณ บาท']);
+  for(const t of r.traces)rows.push([t.name,t.status,t.reason,t.atTargetSatang===null?'ยังไม่ทราบ':t.atTargetSatang/100,t.withdrawnSatang/100]);
+  rows.push([],['รายละเอียดสมมติฐานรายแหล่ง','รายการ','หน่วย','ค่าที่ระบุ']);
+  for(const s of state.sources){for(const f of sourceFields[s.kind]){const value=s.values[f.key];rows.push([s.name,f.label,f.unit==='money'?'บาท':f.unit==='percent'?'%':'ปี',value===null?'ยังไม่ทราบ':value/(f.unit==='age'?1:100)]);}rows.push([s.name,'อ้างอิงเท่านั้น','',String(s.referenceOnly)]);if(s.kind==='tax')rows.push([s.name,'นำไปออมต่อ / รวมในเงินออมแล้ว','',`${s.reinvest} / ${s.alreadyInSavings}`]);if(s.kind==='insurance'){rows.push([s.name,'แนวทาง / จ่ายเบี้ยจาก / ใช้เงินรับในแผน','',`${s.policyMode} / ${s.premiumFunding} / ${s.receiveInPlan}`],[s.name,'เดือนเวนคืน','',s.surrenderMonth??'ไม่ได้ระบุ']);for(const f of s.flows)rows.push([s.name,`${f.kind} ${f.frequency} ${f.startMonth} ถึง ${f.endMonth??'ครั้งเดียว'}`,'บาทต่อครั้ง',f.amountSatang===null?'ยังไม่ทราบ':f.amountSatang/100]);}}
+  rows.push([],['รูปแบบที่พัก',state.housingMode],['การปรับปีราคาที่พัก',state.housingPricing],['ค่าที่พักหลังหมดงบ บาท/เดือน',state.afterHousingMonthlySatang===null?'ไม่ได้ระบุ':state.afterHousingMonthlySatang/100]);
+  if(state.housingBudget){const p=state.housingBudget.plan;rows.push(['งบที่พักต้นทาง',p.residenceId,p.model,p.startYear,p.years,p.occupants],['เงินแรกเข้า / ยอดประจำ / ค่าดูแลต่อคน / ค่าอื่น / เงินประกัน หน่วยบาท',...[p.upfrontSatang,p.recurringSatang,p.monthlyCareSatang,p.monthlyOtherSatang,p.depositSatang].map(v=>v===null?'ยังไม่ทราบ':v/100)],['อัตราขึ้นราคางบที่พัก %/ปี',p.annualIncreaseBps===null?'ยังไม่ทราบ':p.annualIncreaseBps/100]);}
+  rows.push([],['หมายเหตุ','ยอดติดลบเป็นยอดขาดในแบบจำลอง ไม่ได้สมมติดอกเบี้ยกู้'],...r.notes.map(n=>['หมายเหตุ',n]));
+  return '\uFEFF'+rows.map(row=>row.map(cell).join(',')).join('\r\n');
+}
