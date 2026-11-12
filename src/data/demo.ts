@@ -1,7 +1,7 @@
 export type Route = 'overview' | 'policies' | 'retirement' | 'club' | 'services' | 'knowledge' | 'account' | 'explore';
 
 export const member = {
-  name: 'เมย์', fullName: 'เมธาวี ใจดี', initials: 'ม',
+  name: 'พีระ', fullName: 'พีระ อารมณ์ดี', initials: 'พ',
   membership: 'LIVERA Member', referenceDate: '10 พฤศจิกายน 2569',
 };
 
