@@ -17,7 +17,7 @@ export function NVLOverview({hideAmounts,toggleAmounts,amount,onExplain}:{hideAm
   const chart=plot(data.values);
   const remaining=nvlTarget-nvlCurrent;
   const visibleAmount=(value:number)=>hideAmounts?'•••,•••':amount(value);
-  return <section className="nvl-card" aria-labelledby="nvl-heading">
+  return <><section className="overview-life-hero" aria-label="ชีวิตหลังเกษียณ"><img src={`${import.meta.env.BASE_URL}images/retirement-residence.webp`} alt="คู่ผู้สูงอายุพักผ่อนร่วมกันในห้องนั่งเล่นของบ้านพัก" fetchPriority="high"/><div><span>A LIFE WELL PLANNED</span><h2>ชีวิตบทใหม่<br/>เริ่มออกแบบได้วันนี้</h2><i/></div><small>ภาพประกอบจำลองด้วย AI</small></section><section className="nvl-card" aria-labelledby="nvl-heading">
     <header className="nvl-summary">
       <div><span className="nvl-kicker">NVL · เงินสะสมสุทธิ</span><h2 id="nvl-heading">{visibleAmount(nvlCurrent)} <small>บาท</small></h2><p>ยอดตัวอย่างในแผนเกษียณ ณ เดือนพฤศจิกายน 2569</p></div>
       <button className="nvl-privacy" onClick={toggleAmounts}>{hideAmounts?<Eye size={18}/>:<EyeOff size={18}/>}<span>{hideAmounts?'แสดงยอด':'ซ่อนยอด'}</span></button>
@@ -38,12 +38,12 @@ export function NVLOverview({hideAmounts,toggleAmounts,amount,onExplain}:{hideAm
       </div>
       <aside className="nvl-goal" aria-label={`ความคืบหน้า ${nvlProgress} เปอร์เซ็นต์ของเป้าหมาย`}>
         <div className="nvl-goal-title"><Target size={18}/><span>เป้าหมาย</span></div>
-        <div className="nvl-goal-layout"><div className="nvl-progress-vertical" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={nvlProgress} aria-label="ความคืบหน้าเงินสะสม"><span style={{height:`${nvlProgress}%`}}/><i/></div><div className="nvl-goal-copy"><strong>{nvlProgress}%</strong><span>ของเป้าหมาย</span></div></div>
-        <dl><div><dt>เป้าหมาย</dt><dd>{visibleAmount(nvlTarget)} บาท</dd></div><div><dt>สะสมแล้ว</dt><dd>{visibleAmount(nvlCurrent)} บาท</dd></div><div><dt>ยังต้องเตรียม</dt><dd>{visibleAmount(remaining)} บาท</dd></div></dl>
+        <div className="nvl-goal-layout"><div className="nvl-goal-copy"><strong>{nvlProgress}%</strong><span>ของเป้าหมาย</span></div></div>
         <div className="nvl-progress-mobile" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={nvlProgress} aria-label="ความคืบหน้าเงินสะสม"><span style={{width:`${nvlProgress}%`}}/></div>
+        <dl><div><dt>เป้าหมาย</dt><dd>{visibleAmount(nvlTarget)} บาท</dd></div><div><dt>สะสมแล้ว</dt><dd>{visibleAmount(nvlCurrent)} บาท</dd></div><div><dt>ยังต้องเตรียม</dt><dd>{visibleAmount(remaining)} บาท</dd></div></dl>
       </aside>
     </div>
     <button className="nvl-source" onClick={onExplain}>ดูที่มาของยอด NVL<ArrowUpRight size={16}/></button>
     <div className="nvl-actions"><a href="#/retirement/accumulation"><Coins size={20}/><span><strong>เติมข้อมูลเงินสะสม</strong><small>เพิ่มหรือทบทวนแหล่งเงิน</small></span><ArrowUpRight size={18}/></a><a href="#/retirement"><Target size={20}/><span><strong>ดูแผนเกษียณ</strong><small>เป้าหมายและเครื่องคำนวณ</small></span><ArrowUpRight size={18}/></a></div>
-  </section>;
+  </section></>;
 }
